@@ -15,7 +15,6 @@ App
             $scope.results = [];         // results array
 
             $scope.search = function(){
-                console.log($scope);
                 if($scope.channels){
                     $scope.loading = true;
 

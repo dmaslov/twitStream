@@ -19,12 +19,12 @@ App.factory('Socket', function($rootScope){
             this.socket
             .on('connect', function () {
                 $rootScope.$broadcast('socket.connected');
-                console.log('connected');
+                //console.log('connected');
 
             })
             .on('disconnect', function () {
                 $rootScope.$broadcast('socket.disconnected');
-                console.log('disconnected');
+                //console.log('disconnected');
 
             })
             .on('news', function (data) {
