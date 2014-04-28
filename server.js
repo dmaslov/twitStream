@@ -17,11 +17,16 @@ app.configure(function(){
     app.use(express.methodOverride());
     app.use(app.router);
     app.use(express.static(path.join(__dirname, 'public')));
+    app.use(redirectUnmatched);
 });
 
 app.configure('development', function(){
     app.use(express.errorHandler());
 });
+
+function redirectUnmatched(req, res) {
+  res.redirect('/');
+}
 
 app.get('/', function(req, res){
     res.sendfile('index.html', {root: app.get('views')});
