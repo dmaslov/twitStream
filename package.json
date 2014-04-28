@@ -10,9 +10,9 @@
     "author": "Dmitry Maslov <maslov.dmitrij@gmail.com>",
     "license": "MIT",
     "dependencies": {
-        "express": ">=3.3.4",
-        "socket.io": ">=0.9.16",
-        "twit": ">=1.1.12"
+        "express": "~3.3.8",
+        "socket.io": "~0.9.16",
+        "twit": "~1.1.12"
     },
     "devDependencies": {
         "gulp": ">=3.5.5",
