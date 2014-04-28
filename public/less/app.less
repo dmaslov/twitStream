@@ -1,0 +1,278 @@
+/**
+ * Bootstrap
+ */
+@import '../components/bootstrap/less/variables.less';
+@import '../components/bootstrap/less/mixins.less';
+@import '../components/bootstrap/less/normalize.less';
+@import '../components/bootstrap/less/print.less';
+@import '../components/bootstrap/less/scaffolding.less';
+@import '../components/bootstrap/less/type.less';
+@import '../components/bootstrap/less/grid.less';
+@import '../components/bootstrap/less/forms.less';
+@import '../components/bootstrap/less/utilities.less';
+@import '../components/bootstrap/less/responsive-utilities.less';
+
+@import '../components/bootstrap/less/popovers.less';
+/**
+ * Custom
+ */
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,400italic);
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400);
+
+/**
+ * Variables & Mixins
+ */
+@family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+@heading-family: "gazebo-bold-font","HelveticaNeue","Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
+@tweetInfoColor: #8899a6;
+@linkColor: #2980b9;
+// @scheme: #34495e;
+// @schemeLightened: lighten(@scheme, 5%);
+// @schemeDarkened: darken(@scheme, 5%);
+@borderRadius: 4px;
+@container-large-desktop: 900px;
+.box-shadow(@x: 0, @y: 0, @blur: 1px, @color: #000){
+    box-shadow: @arguments;
+    -moz-box-shadow: @arguments;
+    -webkit-box-shadow: @arguments;
+}
+
+.ng-animate(@showDuration: .25s, @repeatDuration: .4s, @repeatAnimationEnabled: false){
+
+    /*
+    *  ng-show/ng-hide animation
+    */
+    -webkit-transition: @showDuration linear all;
+    -moz-transition: @showDuration linear all;
+    -ms-transition: @showDuration linear all;
+    -o-transition: @showDuration linear all;
+    transition: @showDuration linear all;
+    opacity:1;
+
+    &.ng-hide {
+        opacity: 0;
+    }
+
+    &.ng-hide-add,
+    &.ng-hide-remove {
+        display:block!important;
+    }
+
+    &.ng-animate when (@repeatAnimationEnabled = true){
+        .ng-animate-repeat(@repeatDuration);
+    }
+}
+
+.ng-animate-repeat(@repeatDuration){
+    /*
+    *  ng-repeat animation
+    */
+    &.ng-enter,
+    &.ng-leave {
+        -webkit-transition: @repeatDuration cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+        -moz-transition: @repeatDuration cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+        -ms-transition: @repeatDuration cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+        -o-transition: @repeatDuration cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+        transition: @repeatDuration cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+        position: relative;
+        display: block;
+    }
+
+    &.ng-enter,
+    &.ng-leave.ng-leave-active {
+        opacity:0;
+        top: -50px;
+        height: 0px;
+    }
+
+    &.ng-leave,
+    &.ng-enter.ng-enter-active {
+        opacity:1;
+        top: 0;
+        height: 110px;
+    }
+}
+
+
+body {
+	font-family: @family;
+	background: #fff;
+	font-weight: 300;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: @heading-family;
+	font-weight: 400;
+}
+
+a {color: @linkColor;}
+
+header {
+	background: url('../images/hero-tile.jpg');
+	padding: 20px 0;
+	margin-bottom: 20px;
+
+	h1 {
+		text-align: center;
+		color: #fff;
+		text-shadow: 0 1px 3px #327FCD;
+		font-weight: 900;
+		font-size: 52px;
+		margin: 20px 0;
+	}
+
+	.logo {
+		text-align: center;
+		margin-bottom: 10px;
+
+		img {width: 150px;}
+	}
+
+	input[type=search] {
+		&::-webkit-search-cancel-button {
+			-webkit-appearance: searchfield-cancel-button;
+		}
+
+		&::-webkit-search-results-decoration {
+			padding-left: 0;
+			padding-right: 10px;
+		}
+
+		&::-webkit-input-placeholder {
+			font-style: italic;
+			color: #aaa;
+		}
+
+		height: 100%;
+        //box-shadow: 0 1px 3px #327FCD;
+        font-size: 18px;
+        padding: 12px 20px 12px 10px;
+        font-weight: 400;
+
+        &:focus {outline: none;}
+	}
+}
+
+section {
+	.container {
+        .twitterLinks(@fontWeigth, @sColor, @aColor, @textDecoration){
+            a {
+                color: @aColor;
+                text-decoration: @textDecoration;
+                &:hover {color: @linkColor;}
+
+                s {
+                    color: @sColor;
+                    text-decoration: none;
+                }
+                b {font-weight: @fontWeigth;}
+            }
+
+
+        }
+
+		background: #fff;
+		border-radius: @borderRadius;
+        //.box-shadow(0 2px 2px #ccc);
+        border: 1px solid #e8e8e8;
+		margin-bottom: 20px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+
+		.avatar {
+			float:left;
+			padding:5px;
+		}
+
+		.tweet-info {
+			margin: 0 0 5px 70px;
+			min-height:50px;
+			word-wrap:break-word;
+			overflow:hidden;
+			padding:5px;
+			display:block;
+
+            .twitterLinks(
+                @fontWeigth: normal,
+                @sColor: @tweetInfoColor,
+                @aColor: inherit,
+                @textDecoration: none
+            );
+		}
+
+		.time {
+			font-size:13px;
+			color:@tweetInfoColor;
+
+			&:before {
+				content: "\00b7";
+                margin: 0 3px;
+			}
+            a{
+                color:inherit;
+                &:hover{
+                    text-decoration: none;
+                    color:inherit;
+                }
+            }
+		}
+
+        .tweet-text {
+            .tweet-media {
+                margin: 10px 0 0 0;
+
+                img {
+                    border:1px solid rgba(0,0,0,0);
+                    border-radius: @borderRadius;
+                }
+            }
+
+            .twitterLinks(
+                @fontWeigth: 400,
+                @sColor: #66b5d2,
+                @aColor: @linkColor,
+                @textDecoration: none
+            );
+        }
+
+		.username{color:@tweetInfoColor;}
+	}
+}
+
+footer {
+	font-family: @heading-family;
+	text-align: center;
+	font-size: 12px;
+	padding: 30px;
+}
+
+.loader {
+    text-align: center;
+    margin: 0 0 20px 50%;
+    background: url(../images/spinner-rosetta-blue.gif) no-repeat 0 0;
+    height: 26px;
+    width: 26px;
+    vertical-align: top;
+    display: block;
+    .ng-animate;
+
+}
+
+.popover {
+    margin-left: 250px;
+    display: block;
+
+    &.top {
+        margin-top: 0;
+    }
+    .ng-animate;
+}
+
+.result {
+    .ng-animate;
+}
