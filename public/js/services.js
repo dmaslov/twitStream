@@ -158,6 +158,7 @@ App.factory('Tweet', function(){
                 _tweet += '<div class="tweet-info">';
                 _tweet += '<a target="_blank" href="http://twitter.com/'+tweet.user.screen_name+'"><strong>' + tweet.user.name + '</strong> <span class="username"><s>@</s><b>'+tweet.user.screen_name+'</b></span></a>';
                 _tweet += '<small class="time"><a href="http://twitter.com/'+tweet.user.screen_name+'/status/'+tweet.id_str+'" target="_blank">'+tweetDateString(tweet.created_at)+'</a> via '+tweet.source+'</small>';
+                //_tweet += '<span class="glyphicon glyphicon-star-empty"></span>';
                 _tweet += '<div class="tweet-text">' + linkifyEntities(tweet) + '</div>';
                 _tweet += '</div>';
                 _tweet += '</div>';
@@ -165,4 +166,8 @@ App.factory('Tweet', function(){
                 return _tweet;
         }
     };
+});
+
+App.factory('StreamStatus', function(){
+    return {};
 });

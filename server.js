@@ -11,6 +11,7 @@ var express = require('express'),
 app.configure(function(){
     app.set('port', process.env.PORT || 8080);
     app.set('views', __dirname + '/views');
+    app.set('partial', __dirname + '/views/partial');
     app.use(express.favicon());
     app.use(express.logger('dev'));
     app.use(express.bodyParser());
@@ -30,6 +31,9 @@ function redirectUnmatched(req, res) {
 
 app.get('/', function(req, res){
     res.sendfile('index.html', {root: app.get('views')});
+})
+.get('/views/partial/:partialName', function(req, res){
+    res.sendfile(req.params['partialName'], {root: app.get('partial')});
 });
 
 function StreamControl(socket, streamOptions){

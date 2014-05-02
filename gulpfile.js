@@ -18,6 +18,9 @@ var paths = {
     less: [
         srcPath + '/less/*.less'
     ],
+    fonts: [
+        srcPath + '/components/bootstrap/fonts/*',
+    ]
 };
 
 gulp.task('js-minifier', function() {
@@ -36,10 +39,14 @@ gulp.task('less-compile', function() {
         .pipe(gulp.dest(srcPath + '/css'));
 });
 
+gulp.task('fonts-copy', function() {
+    gulp.src(paths.fonts)
+        .pipe(gulp.dest(srcPath + '/fonts'));
+});
 
 gulp.task('watch', function(){
     gulp.watch(paths.js, ['js-minifier']);
     gulp.watch(paths.less, ['less-compile']);
 });
 
-gulp.task('default', ['js-minifier', 'less-compile', 'watch']);
+gulp.task('default', ['js-minifier', 'less-compile', 'fonts-copy', 'watch']);

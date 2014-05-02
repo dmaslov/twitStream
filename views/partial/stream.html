@@ -1,0 +1,21 @@
+<div ng-init="search()">
+    <header class="col-xs-12">
+        <div class="container">
+            <div class="row">
+                <div>
+                    <h1>TwitStream</h1>
+                    <form ng-submit="search()">
+                        <div ng-cloak ng-show="showHint" class="popover top" ng-include src="'/views/partial/popover.html'"></div>
+                        <input ng-model="channels" ng-click="toggleHint()" type="search" results="5" autofocus="autofocus" class="form-control" placeholder="e.g #Apple">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section ng-cloak class="col-xs-12">
+        <div ng-show="loading" class="loader"></div>
+        <div ng-show="hasResults">
+            <div class="result" ng-repeat="result in results" ng-bind-html="result.tweet"></div>
+        </div>
+    </section>
+</div>

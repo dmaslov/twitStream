@@ -1,0 +1,16 @@
+<header class="col-xs-12">
+    <div class="container">
+        <div class="row">
+            <div>
+                <h1>TwitStream</h1>
+                <input ng-model="favorites" ng-keyup="" type="search" results="5" autofocus="autofocus" class="form-control">
+            </div>
+        </div>
+    </div>
+</header>
+<section ng-cloak class="col-xs-12">
+    <div ng-show="loading" class="loader"></div>
+    <div ng-show="hasResults">
+        <div class="result" ng-repeat="result in results"></div>
+    </div>
+</section>
