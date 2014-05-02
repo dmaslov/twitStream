@@ -35,6 +35,25 @@ App.factory('Socket', function($rootScope){
 
 App.factory('Tweet', function($rootScope){
     return {
+        responseTypes: {
+            success: {
+                message: 'Added to favorites!',
+                bootstrapClass: 'success'
+            },
+
+            error: {
+                message: 'Added to favorites failed..',
+                bootstrapClass: 'danger'
+            },
+
+            notEnoughSpace: {
+                message: 'You don\'t have enough space in browser local storage..',
+                bootstrapClass: 'warning'
+            }
+        },
+
+        response: {},
+
         parse: function(tweet){
             function tweetDateString(time_value){
                 var values = time_value.split(" ");
@@ -76,7 +95,7 @@ App.factory('Tweet', function($rootScope){
                         index_map[entry.indices[0]] = [
                             entry.indices[1],
                             function(text){
-                                return "<a href='"+entry.url+"'><b>"+entry.url+"</b></a>";
+                                return '<a href="'+entry.url+'"><b>'+entry.url+'</b></a>';
                             }
                         ];
                     });
@@ -87,7 +106,7 @@ App.factory('Tweet', function($rootScope){
                         index_map[entry.indices[0]] = [
                             entry.indices[1],
                             function(text) {
-                                return "<a href='http://twitter.com/search?q="+escape("#"+entry.text)+"&src=hash'><s>"+text.substring(0, 1)+"</s><b>"+text.substring(1, text.length)+"</b></a>";
+                                return '<a href="http://twitter.com/search?q='+escape("#"+entry.text)+'"&src=hash"><s>'+text.substring(0, 1)+'</s><b>'+text.substring(1, text.length)+'</b></a>';
                             }
                         ];
                     });
@@ -98,7 +117,7 @@ App.factory('Tweet', function($rootScope){
                         index_map[entry.indices[0]] = [
                             entry.indices[1],
                             function(text) {
-                                return "<a title='"+entry.name+"' href='http://twitter.com/"+entry.screen_name+"'><s>"+text.substring(0, 1)+"</s><b>"+text.substring(1, text.length)+"</b></a>";
+                                return '<a href="http://twitter.com/'+entry.screen_name+'"><s>'+text.substring(0, 1)+'</s><b>'+text.substring(1, text.length)+'</b></a>';
                             }
                         ];
                     });
@@ -109,7 +128,7 @@ App.factory('Tweet', function($rootScope){
                         index_map[entry.indices[0]] = [
                             entry.indices[1],
                             function(text) {
-                                return "<div class='tweet-media'><img src='"+entry.media_url+"'></div>";
+                                return '<div class="tweet-media"><img src="'+entry.media_url+'"></div>';
                             }
                         ];
                     });
@@ -153,7 +172,12 @@ App.factory('Tweet', function($rootScope){
         },
 
         addToFavorite: function(tweet){
+            this.response = this.responseTypes.error;
             $rootScope.$broadcast('favorites.added');
+        },
+
+        getResponse: function(){
+            return this.response;
         }
     };
 });

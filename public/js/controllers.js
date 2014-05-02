@@ -5,16 +5,17 @@ App
     [
         '$location',
         '$scope',
+        '$timeout',
         'Socket',
         'Tweet',
         'StreamStatus',
-        function($location, $scope, Socket, Tweet, StreamStatus){
+        function($location, $scope, $timeout, Socket, Tweet, StreamStatus){
             $scope.socketInited = StreamStatus.socketInited || false; // prevent reconnect on every submit action
             $scope.loading = StreamStatus.loading || false;      // show/hide loader
             $scope.showHint = StreamStatus.showHint || false;     // show/hide hint
             $scope.hasResults = StreamStatus.hasResults || false;   // show/hide results
             $scope.results = StreamStatus.results || [];         // results array
-            $scope.addedToFavorite = false;
+            $scope.addedToFavorites = false;
 
             $scope.search = function(){
                 var streamOn = StreamStatus.connected || false;
@@ -73,17 +74,19 @@ App
                 $scope.showHint = !$scope.showHint;
             };
 
-            $scope.addToFavorites = function(tweet){
-                if(typeof $scope.$$listeners['favorites.added'] == 'undefined'){
-                    $scope.$on('favorites.added', function () {
-                        console.log('favorites.added');
-                        $scope.addedToFavorite = true;
-                        setTimeout(function(){
-                            $scope.addedToFavorite = false;
-                        }, 1);
-                    });
+            $scope.addToFavorites = function(tweet, added){
+                if(!added){
+                    if(typeof $scope.$$listeners['favorites.added'] == 'undefined'){
+                        $scope.$on('favorites.added', function () {
+                            $scope.addedToFavorites = true;
+                            $scope.favoritesResponse = Tweet.getResponse();
+                            $timeout(function(){
+                                $scope.addedToFavorites = false;
+                            }, 1500);
+                        });
+                    }
+                    Tweet.addToFavorite(tweet);
                 }
-                Tweet.addToFavorite(tweet);
             };
         }
     ]
