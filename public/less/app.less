@@ -13,6 +13,7 @@
 @import '../components/bootstrap/less/responsive-utilities.less';
 @import '../components/bootstrap/less/popovers.less';
 @import '../components/bootstrap/less/glyphicons.less';
+@import '../components/bootstrap/less/alerts.less';
 /**
  * Custom
  */
@@ -280,4 +281,11 @@ footer {
 
 .result {
     .ng-animate;
+}
+
+.favorites-added {
+    position: fixed;
+    top: 208px;
+    right: 20px;
+    .ng-animate(@showDuration: .5s);
 }

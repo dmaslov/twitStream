@@ -14,6 +14,7 @@ App
             $scope.showHint = StreamStatus.showHint || false;     // show/hide hint
             $scope.hasResults = StreamStatus.hasResults || false;   // show/hide results
             $scope.results = StreamStatus.results || [];         // results array
+            $scope.addedToFavorite = false;
 
             $scope.search = function(){
                 var streamOn = StreamStatus.connected || false;
@@ -73,8 +74,16 @@ App
             };
 
             $scope.addToFavorites = function(tweet){
-                //not implemented yet..
-                // console.log(tweet);
+                if(typeof $scope.$$listeners['favorites.added'] == 'undefined'){
+                    $scope.$on('favorites.added', function () {
+                        console.log('favorites.added');
+                        $scope.addedToFavorite = true;
+                        setTimeout(function(){
+                            $scope.addedToFavorite = false;
+                        }, 1);
+                    });
+                }
+                Tweet.addToFavorite(tweet);
             };
         }
     ]

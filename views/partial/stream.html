@@ -5,7 +5,7 @@
                 <div>
                     <h1>TwitStream</h1>
                     <form ng-submit="search()">
-                        <div ng-cloak ng-show="showHint" class="popover top" ng-include src="'/views/partial/popover.html'"></div>
+                        <div ng-cloak ng-show="showHint" class="popover top" ng-include src="'/views/partial/_popover.html'"></div>
                         <input ng-model="channels" ng-click="toggleHint()" type="search" results="5" autofocus="autofocus" class="form-control" placeholder="e.g #Apple">
                     </form>
                 </div>
@@ -42,4 +42,5 @@
             </div>
         </div>
     </section>
+    <div ng-cloak ng-show="addedToFavorite" class="favorites-added" ng-include src="'/views/partial/_favoritesAdded.html'"></div>
 </div>
