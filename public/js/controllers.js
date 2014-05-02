@@ -32,7 +32,7 @@ App
                                 $scope.$apply(function(){
                                     $scope.hasResults = true;
                                     $scope.loading = false;
-                                    $scope.results.unshift({tweet: Tweet.parse(Socket.response)});
+                                    $scope.results.unshift(Tweet.parse(Socket.response));
                                 });
                             });
                         }
@@ -70,6 +70,11 @@ App
 
             $scope.toggleHint = function(){
                 $scope.showHint = !$scope.showHint;
+            };
+
+            $scope.addToFavorites = function(tweet){
+                //not implemented yet..
+                // console.log(tweet);
             };
         }
     ]

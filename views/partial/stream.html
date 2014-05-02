@@ -15,7 +15,31 @@
     <section ng-cloak class="col-xs-12">
         <div ng-show="loading" class="loader"></div>
         <div ng-show="hasResults">
-            <div class="result" ng-repeat="result in results" ng-bind-html="result.tweet"></div>
+            <div class="result" ng-repeat="tweet in results">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="avatar">
+                                <img class="img-rounded" ng-src="{{tweet.user.avatarUrl}}">
+                            </div>
+                            <div class="tweet-info">
+                                <a target="_blank" href="http://twitter.com/{{tweet.user.screenName}}">
+                                    <strong>{{tweet.user.name}}</strong>
+                                    <span class="username">
+                                        <s>@</s><b>{{tweet.user.screenName}}</b>
+                                    </span>
+                                </a>
+                                <small class="time">
+                                    <a href="http://twitter.com/{{tweet.user.screenName}}/status/{{tweet.idStr}}" target="_blank">{{tweet.created}}</a>
+                                    via <span ng-bind-html="tweet.source"></span>
+                                </small>
+                                <span ng-init="inFavorites=false" ng-click="addToFavorites(tweet); inFavorites=true" class="glyphicon favorite-ico" ng-class="(inFavorites) ? 'glyphicon-star' : 'glyphicon-star-empty'"></span>
+                                <div class="tweet-text" ng-bind-html="tweet.entities"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </div>
