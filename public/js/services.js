@@ -1,60 +1,56 @@
-'use strict';
-
+/*
+* Socket factory. Performs all socket actions
+*/
 App.factory('Socket', function($rootScope){
+    'use strict';
+
+    var socket = null;
 
     return {
-        socket: null,
-        response: {},
-
         emit: function(channels){
-            this.socket.emit('addChanel', {channels: channels});
+            socket.emit('addChanel', {channels: channels});
         },
 
         connect: function(){
-            this.socket = io.connect('/');
+            socket = io.connect('/');
             this.listen();
         },
 
         listen: function(){
-            this.socket
+            socket
             .on('connect', function(){
-                $rootScope.$broadcast('socket.connected');
+                $rootScope.$broadcast('socket.connected', {
+                    socketId: this.getId()
+                });
 
-            })
+            }.bind(this))
             .on('disconnect', function(){
                 $rootScope.$broadcast('socket.disconnected');
 
             })
             .on('news', function(data){
-                this.response = data;
-                $rootScope.$broadcast('socket.updates');
+                $rootScope.$broadcast('socket.updates', {
+                    data: data
+                });
             }.bind(this));
+        },
+
+        getId: function(){
+            return socket.socket.sessionid;
         }
     };
 });
 
-App.factory('Tweet', function($rootScope){
+/*
+* Tweet factory. Parse single tweet data.
+*/
+App.factory('Tweet', function(Storage){
+    'use strict';
+
     return {
-        responseTypes: {
-            success: {
-                message: 'Added to favorites!',
-                bootstrapClass: 'success'
-            },
-
-            error: {
-                message: 'Added to favorites failed..',
-                bootstrapClass: 'danger'
-            },
-
-            notEnoughSpace: {
-                message: 'You don\'t have enough space in browser local storage..',
-                bootstrapClass: 'warning'
-            }
-        },
-
-        response: {},
-
+        /* parses tweet entities */
         parse: function(tweet){
+            /* Parse created_at variable and returns string like 'a minute ago' etc. */
             function tweetDateString(time_value){
                 var values = time_value.split(" ");
                 time_value = values[1] + " " + values[2] + ", " + values[5] + " " + values[3];
@@ -83,6 +79,7 @@ App.factory('Tweet', function($rootScope){
                 return r;
             }
 
+            /* returns formatted (with html tags) entities like hashtags, mentions */
             function linkifyEntities(tweet){
                 if(!(tweet.entities)){
                     return tweet.text;
@@ -169,19 +166,176 @@ App.factory('Tweet', function($rootScope){
                 idStr: tweet.id_str,
                 created: tweetDateString(tweet.created_at)
             };
-        },
-
-        addToFavorite: function(tweet){
-            this.response = this.responseTypes.error;
-            $rootScope.$broadcast('favorites.added');
-        },
-
-        getResponse: function(){
-            return this.response;
         }
     };
 });
 
+/*
+* Keeps temporary data from controllers. Helps to restore $scope state when navigate between controllers
+*/
 App.factory('StreamStatus', function(){
-    return {};
+    'use strict';
+
+    var tmp = {};
+    return {
+        set: function(key, value){
+            tmp[key] = value;
+        },
+
+        get: function(key){
+            return tmp[key];
+        }
+    };
+});
+
+/*
+* Performs actions to save/remove data from LocalStorage
+*/
+App.factory('Storage', function($rootScope, localStorageService){
+    'use strict';
+
+    var storageKey = null;
+    var response = {};
+    var responseTypes = {
+        success: {
+            message: 'Added to favorites!',
+            bootstrapClass: 'success',
+            type: 'ok'
+        },
+
+        error: {
+            message: 'Adding to favorites failed..',
+            bootstrapClass: 'danger',
+            type: 'error'
+        },
+
+        notEnoughSpace: {
+            message: 'You don\'t have enough space in browser local storage..',
+            bootstrapClass: 'warning',
+            type: 'error'
+        },
+
+        deleteSuccess: {
+            message: 'Removed from favorites!',
+            bootstrapClass: 'success',
+            type: 'ok'
+        },
+
+        deleteError: {
+            message: 'Removing from favorites failed..',
+            bootstrapClass: 'danger',
+            type: 'error'
+        },
+
+        deleteAllSuccess: {
+            message: 'Removed all from favorites!',
+            bootstrapClass: 'success',
+            type: 'ok'
+        },
+
+        deleteAllError: {
+            message: 'Removing all from favorites failed..',
+            bootstrapClass: 'danger',
+            type: 'error'
+        }
+    };
+
+    return {
+        isSupported: function(){
+            return localStorageService.isSupported;
+        },
+
+        set: function(value){
+            return localStorageService.set(storageKey, value);
+        },
+
+        get: function(){
+            return localStorageService.get(storageKey);
+        },
+
+        remove: function(tweetId){
+            var tweets;
+            var restTweets = [];
+            try{
+                tweets = this.get();
+                if(!tweets || tweets === 'null'){
+                    response = responseTypes.deleteError;
+                }
+                else{
+                    delete tweets[tweetId];
+
+                    angular.forEach(tweets, function(value, key){
+                        this.push(value);
+                    }, restTweets);
+
+                    this.set(tweets);
+                    response = responseTypes.deleteSuccess;
+                }
+            }
+            catch(e){
+                response = responseTypes.deleteError;
+            }
+
+            $rootScope.$broadcast('favorites.removed', {
+                status: this.getResponse()
+            });
+        },
+
+        removeAll: function(){
+            try{
+                localStorageService.remove(storageKey);
+                response = responseTypes.deleteAllSuccess;
+            }
+            catch(e){
+                response = responseTypes.deleteAllError;
+            }
+
+            $rootScope.$broadcast('favorites.removedAll', {
+                status: this.getResponse()
+            });
+        },
+
+        addToFavorites: function(key, tweet){
+            var value;
+            try{
+                storageKey = key;
+                value = this.get(key);
+                if(!value || value === 'null'){
+                    value = {};
+                }
+
+                value[tweet.idStr] = tweet;
+                this.set(value);
+                response = responseTypes.success;
+            }
+            catch(e){
+                if(e.name === 'QUOTA_EXCEEDED_ERR' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED'){
+                    response = responseTypes.notEnoughSpace;
+                }
+                else{
+                    response = responseTypes.error;
+                }
+            }
+
+            $rootScope.$broadcast('favorites.added', {
+                status: this.getResponse()
+            });
+        },
+
+        getFromFavorites: function(){
+            var _return = [];
+            var data = this.get();
+
+            if(data){
+                angular.forEach(data, function(value, key){
+                    this.push(value);
+                }, _return);
+            }
+            return _return;
+        },
+
+        getResponse: function(){
+            return response;
+        }
+    };
 });

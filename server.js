@@ -1,7 +1,3 @@
-/**
- * Module dependencies.
- */
-
 var express = require('express'),
     path = require('path'),
     app = express(),
@@ -10,30 +6,27 @@ var express = require('express'),
 
 app.configure(function(){
     app.set('port', process.env.PORT || 8080);
-    app.set('views', __dirname + '/views');
-    app.set('partial', __dirname + '/views/partial');
+    app.set('views', path.join(__dirname, 'views'));
+    app.set('partial', path.join(__dirname, 'views', 'partial'));
     app.use(express.favicon());
     app.use(express.logger('dev'));
     app.use(express.bodyParser());
     app.use(express.methodOverride());
-    app.use(app.router);
     app.use(express.static(path.join(__dirname, 'public')));
-    app.use(redirectUnmatched);
 });
 
 app.configure('development', function(){
     app.use(express.errorHandler());
 });
 
-function redirectUnmatched(req, res) {
-  res.redirect('/');
-}
-
 app.get('/', function(req, res){
     res.sendfile('index.html', {root: app.get('views')});
 })
-.get('/views/partial/:partialName', function(req, res){
+.get('/partial/:partialName', function(req, res){
     res.sendfile(req.params['partialName'], {root: app.get('partial')});
+})
+.get('*', function(req, res){
+    res.redirect('/');
 });
 
 function StreamControl(socket, streamOptions){

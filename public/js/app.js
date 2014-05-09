@@ -1,15 +1,15 @@
-'use strict';
-
 var App = angular
-.module('twitStream', ['ngRoute', 'ngSanitize', 'ngAnimate'])
+.module('twitStream', ['ngRoute', 'ngSanitize', 'ngAnimate', 'LocalStorageModule'])
 .config(function($routeProvider){
+    'use strict';
+
     $routeProvider
     .when('/', {
-        templateUrl: '/views/partial/stream.html',
+        templateUrl: '/partial/stream.html',
         controller: 'StreamController'
     })
     .when('/storage', {
-        templateUrl: '/views/partial/favorites.html',
+        templateUrl: '/partial/favorites.html',
         controller: 'FavoritesController'
     })
     .otherwise({redirectTo:'/'});

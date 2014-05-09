@@ -1,0 +1,13 @@
+<nav class="sub">
+    <ul>
+        <li ng-class="{active: ($location.path() == '/') }">
+            <strong><a href="#/">Stream</a></strong>
+        </li>
+        <li ng-class="{active: ($location.path() == '/storage') }">
+            <strong><a href="#/storage">Favorites</a></strong>
+        </li>
+        <li ng-show="$location.path() == '/storage'" ng-class="{disabled: !favoritesList.length}">
+            <strong><a href="" ng-click="removeAllFromFavorites()">Delete All</a></strong>
+        </li>
+    </ul>
+</nav>

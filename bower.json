@@ -1,17 +1,18 @@
 {
-    "name": "twitStream",
-    "version": "0.0.1",
-    "private": true,
-    "ignore": [
-        "**/.*",
-        "node_modules",
-        "components"
-    ],
-    "dependencies": {
-        "angular": "angular#1.2.15",
-        "angular-route": "angular-route#1.2.15",
-        "angular-sanitize": "angular-sanitize#1.2.15",
-        "angular-animate": "angular-animate#1.2.15",
-        "bootstrap": "bootstrap#3.1.1"
-    }
+  "name": "twitStream",
+  "version": "0.0.1",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
+  "dependencies": {
+    "angular": "angular#1.2.16",
+    "angular-route": "angular-route#1.2.16",
+    "angular-sanitize": "angular-sanitize#1.2.16",
+    "angular-animate": "angular-animate#1.2.16",
+    "angular-local-storage": "angular-local-storage#0.0.3",
+    "bootstrap": "bootstrap#3.1.1"
+  }
 }

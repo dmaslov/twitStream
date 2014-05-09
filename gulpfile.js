@@ -12,6 +12,7 @@ var paths = {
             srcPath + '/components/angular-route/angular-route.js',
             srcPath + '/components/angular-sanitize/angular-sanitize.js',
             srcPath + '/components/angular-animate/angular-animate.js',
+            srcPath + '/components/angular-local-storage/angular-local-storage.js',
             srcPath + '/js/**/*.js',
             '!' + srcPath + '/js/*.min.js'
         ],
