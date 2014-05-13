@@ -4,7 +4,7 @@
             <div class="row">
                 <h1>TwitStream</h1>
                 <form ng-submit="search()">
-                    <div ng-cloak ng-show="showHint" class="popover top" ng-include src="'/partial/_popover.html'"></div>
+                    <div ng-cloak ng-show="showHint" class="popover-wrapper" ng-include src="'/partial/_popover.html'"></div>
                     <input ng-model="channels" ng-click="toggleHint()" type="search" results="5" autofocus class="form-control" placeholder="e.g #Apple">
                 </form>
             </div>
@@ -17,18 +17,18 @@
             <div class="result" ng-repeat="tweet in results">
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-xs-12">
                             <div class="avatar">
                                 <img class="img-rounded" ng-src="{{tweet.user.avatarUrl}}">
                             </div>
                             <div class="tweet-info">
                                 <a target="_blank" ng-href="http://twitter.com/{{tweet.user.screenName}}">
                                     <strong>{{tweet.user.name}}</strong>
-                                    <span class="username">
+                                    <span class="username hidden-xs">
                                         <s>@</s><b>{{tweet.user.screenName}}</b>
                                     </span>
                                 </a>
-                                <small class="time">
+                                <small class="time hidden-xs">
                                     <a ng-href="http://twitter.com/{{tweet.user.screenName}}/status/{{tweet.idStr}}" target="_blank">{{tweet.created}}</a>
                                     via <span ng-bind-html="tweet.source"></span>
                                 </small>

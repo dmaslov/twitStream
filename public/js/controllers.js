@@ -12,17 +12,17 @@ App
             'use strict';
 
             $scope.$location = $location;
-            $scope.socketInited = StreamStatus.get('socketInited') || false; // prevent reconnect on every submit action
-            $scope.loading = StreamStatus.get('loading') || false;      // show/hide loader
-            $scope.showHint = StreamStatus.get('showHint') || false;     // show/hide hint
-            $scope.hasResults = StreamStatus.get('hasResults') || false;   // show/hide results
+            $scope.socketInited = StreamStatus.get('socketInited') || false; // Prevents from reconnection for every submit action.
+            $scope.loading = StreamStatus.get('loading') || false;      // Shows/hides loader.
+            $scope.showHint = StreamStatus.get('showHint') || false;     // Shows/hides hint
+            $scope.hasResults = StreamStatus.get('hasResults') || false;   // Shows/hides results
             $scope.results = StreamStatus.get('results') || [];         // results array
             $scope.addedToFavorites = false; //show/hide added to favorites alert
-            $scope.socketId = StreamStatus.get('socketId') || undefined; //used as key for LocalStorage
+            $scope.socketId = StreamStatus.get('socketId') || undefined; //Used as a key for the LocalStorage.
 
-            /* called on ng-init() and when send keywords */
+            /* Called on ng-init() and when keywords for tracking are sent. */
             $scope.search = function(){
-                var streamOn = StreamStatus.get('connected') || false; // if we came from favorites page or redirected from bad url
+                var streamOn = StreamStatus.get('connected') || false; // If we came from the 'Favorites' page or there was a redirection from some non-existing URL to the 'Stream' page.
                 $scope.channels = $scope.channels || StreamStatus.get('channels');
 
                 if($scope.channels){
@@ -30,7 +30,7 @@ App
 
                     if(!$scope.socketInited || streamOn){
                         if(!streamOn){
-                            /* connect only once when app starts */
+                            /* Connects just once when the app starts. */
                             Socket.connect();
                         }
                     }
@@ -38,7 +38,7 @@ App
                     var channels = $scope.channels.split(',');
                     Socket.emit(channels);
 
-                    /* save the required variables and then assign them to the $scope if redirect triggered */
+                    /* Save the required variables and then assign them to $scope if there was a redirection. */
                     StreamStatus.set('channels', $scope.channels);
                     StreamStatus.set('showHint', false);
                     StreamStatus.set('hasResults', true);
@@ -69,7 +69,7 @@ App
 
             if(typeof $scope.$$listeners['socket.updates'] == 'undefined'){
                 $scope.$on('socket.updates', function(event, response){
-                    /* using $apply because have event from non-Angular */
+                    /* $apply is used because of a non-Angular event. */
                     $scope.$apply(function(){
                         $scope.hasResults = true;
                         $scope.loading = false;
@@ -110,10 +110,10 @@ App
             'use strict';
 
             $scope.$location = $location;
-            $scope.tweetIndex = null; //clicked tweet index
+            $scope.tweetIndex = null; //A clicked tweet index.
             $scope.favoritesList = false;
-            $scope.removedFromFavorites = false; //show/hide alert
-            $scope.q = ''; //filter
+            $scope.removedFromFavorites = false; //Shows/hides alerts
+            $scope.q = ''; //Filter
 
             $scope.getAllFromFavorites = function(){
                 var storageData = Storage.getFromFavorites();

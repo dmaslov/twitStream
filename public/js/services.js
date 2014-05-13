@@ -1,5 +1,5 @@
 /*
-* Socket factory. Performs all socket actions
+* Socket factory. Performs all socket actionsю
 */
 App.factory('Socket', function($rootScope){
     'use strict';
@@ -42,15 +42,15 @@ App.factory('Socket', function($rootScope){
 });
 
 /*
-* Tweet factory. Parse single tweet data.
+* Tweet factory. Parses a single tweet data.
 */
 App.factory('Tweet', function(Storage){
     'use strict';
 
     return {
-        /* parses tweet entities */
+        /* Parses tweet entities */
         parse: function(tweet){
-            /* Parse created_at variable and returns string like 'a minute ago' etc. */
+            /* Parses the 'created_at' variable and returns such a line like 'a minute ago' etc. */
             function tweetDateString(time_value){
                 var values = time_value.split(" ");
                 time_value = values[1] + " " + values[2] + ", " + values[5] + " " + values[3];
@@ -79,7 +79,7 @@ App.factory('Tweet', function(Storage){
                 return r;
             }
 
-            /* returns formatted (with html tags) entities like hashtags, mentions */
+            /* Returns such formatted (with html tags) entities like hashtags, mentions etc */
             function linkifyEntities(tweet){
                 if(!(tweet.entities)){
                     return tweet.text;
@@ -171,7 +171,7 @@ App.factory('Tweet', function(Storage){
 });
 
 /*
-* Keeps temporary data from controllers. Helps to restore $scope state when navigate between controllers
+* Keeps temporary data from controllers. Helps to restore the $scope state for data communication or navigation between controllers.
 */
 App.factory('StreamStatus', function(){
     'use strict';
@@ -189,7 +189,7 @@ App.factory('StreamStatus', function(){
 });
 
 /*
-* Performs actions to save/remove data from LocalStorage
+* Saves/removes data from LocalStorage
 */
 App.factory('Storage', function($rootScope, localStorageService){
     'use strict';
@@ -198,43 +198,43 @@ App.factory('Storage', function($rootScope, localStorageService){
     var response = {};
     var responseTypes = {
         success: {
-            message: 'Added to favorites!',
+            message: 'Added to "Favorites".',
             bootstrapClass: 'success',
             type: 'ok'
         },
 
         error: {
-            message: 'Adding to favorites failed..',
+            message: 'Adding to "Favorites" failed.',
             bootstrapClass: 'danger',
             type: 'error'
         },
 
         notEnoughSpace: {
-            message: 'You don\'t have enough space in browser local storage..',
+            message: 'You don\'t have enough space in the browser local storage.',
             bootstrapClass: 'warning',
             type: 'error'
         },
 
         deleteSuccess: {
-            message: 'Removed from favorites!',
+            message: 'Removed from "Favorites".',
             bootstrapClass: 'success',
             type: 'ok'
         },
 
         deleteError: {
-            message: 'Removing from favorites failed..',
+            message: 'Removing from "Favorites" failed.',
             bootstrapClass: 'danger',
             type: 'error'
         },
 
         deleteAllSuccess: {
-            message: 'Removed all from favorites!',
+            message: 'All from "Favorites" is removed.',
             bootstrapClass: 'success',
             type: 'ok'
         },
 
         deleteAllError: {
-            message: 'Removing all from favorites failed..',
+            message: 'Removing all from "Favorites" failed.',
             bootstrapClass: 'danger',
             type: 'error'
         }

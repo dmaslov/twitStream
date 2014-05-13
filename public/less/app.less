@@ -27,8 +27,15 @@
 @heading-family: "gazebo-bold-font","HelveticaNeue","Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
 @tweetInfoColor: #8899a6;
 @linkColor: #2980b9;
+@activeTabBorderColor: rgba(251, 125, 13, .7); //rgba(255, 0, 0, .7)
 @borderRadius: 4px;
 @container-large-desktop: 900px;
+
+.active-tab(@color: @activeTabBorderColor){
+    border-bottom: 3px solid @color;
+    //.box-shadow(@blur: 5px, @color: #aaa);
+}
+
 .box-shadow(@x: 0, @y: 0, @blur: 1px, @color: #000){
     box-shadow: @arguments;
     -moz-box-shadow: @arguments;
@@ -205,6 +212,13 @@ section{
                 float: right;
                 cursor: pointer;
             }
+
+            .tweet-media{
+                img{
+                    max-width: 100%;
+                    height: auto;
+                }
+            }
 		}
 
 		.time{
@@ -274,15 +288,16 @@ footer{
     .ng-animate;
 
 }
-
-.popover{
-    margin-left: 250px;
-    display: block;
-
-    &.top{
-        margin-top: 0;
-    }
+.popover-wrapper{
+    position: relative;
     .ng-animate;
+
+    .popover{
+        position: absolute;
+        top: -100px;
+        left: 0;
+        display: block;
+    }
 }
 
 .result{
@@ -291,8 +306,8 @@ footer{
 
 .favorites-alert{
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 38px;
+    right: 14px;
     z-index: 99999;
     .ng-animate(@showDuration: .5s);
 }
@@ -306,15 +321,17 @@ nav{
     li{
         display: inline-block;
         list-style: none;
-        margin-right: 10px;
+        margin-right: 5px;
         text-align: center;
         border-bottom-right-radius: @borderRadius;
         border-bottom-left-radius: @borderRadius;
-        border-color: #f1a02a;
         .box-shadow(@blur: 3px, @color: #aaa);
 
         &.active{
-            background: rgba(251, 125, 13, .7);
+            .active-tab;
+            a{
+                height: 44px;
+            }
         }
 
         &.disabled{
@@ -331,9 +348,11 @@ nav{
         }
 
         a{
+            height: 40px;
+            min-width: 95px;
             color: #333;
             display: block;
-            padding: 10px 25px;
+            padding: 10px 0px;
             text-decoration: none;
             &:hover{
                 text-decoration: none;
