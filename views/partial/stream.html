@@ -2,10 +2,10 @@
     <header class="col-xs-12">
         <div class="container">
             <div class="row">
-                <h1>TwitStream</h1>
+                <h1 class="hidden-xs">TwitStream</h1>
                 <form ng-submit="search()">
                     <div ng-cloak ng-show="showHint" class="popover-wrapper" ng-include src="'/partial/_popover.html'"></div>
-                    <input ng-model="channels" ng-click="toggleHint()" type="search" results="5" autofocus class="form-control" placeholder="e.g #Apple">
+                    <input ng-model="channels" ng-click="toggleHint()" type="search" results="5" class="form-control" placeholder="e.g #Apple">
                 </form>
             </div>
         </div>

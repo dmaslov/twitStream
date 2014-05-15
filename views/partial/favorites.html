@@ -2,8 +2,8 @@
     <header class="col-xs-12">
         <div class="container">
             <div class="row">
-                <h1>TwitStream</h1>
-                <input ng-model="q" type="search" results="5" autofocus class="form-control">
+                <h1 class="hidden-xs">TwitStream</h1>
+                <input ng-model="q" type="search" results="5" class="form-control">
             </div>
         </div>
     </header>
@@ -37,7 +37,7 @@
             </div>
         </div>
         <div ng-show="!favoritesList">
-            <div class="empty col-xs-6">
+            <div class="empty col-xs-12 col-sm-6">
                 <div class="alert alert-warning">
                     <p>The favorites is empty..</p>
                 </div>
