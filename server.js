@@ -96,6 +96,11 @@ io.sockets.on('connection', function (socket) {
     });
 });
 
+process.on('uncaughtException', function (exception) {
+    // handle or ignore error
+    console.log(exception);
+});
+
 app.start = app.listen = function(){
     return server.listen.apply(server, arguments);
 };

@@ -17,14 +17,14 @@
 /**
  * Custom
  */
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,400italic);
-@import url(https://fonts.googleapis.com/css?family=Montserrat:400);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,800,400italic);
+@import url(http://fonts.googleapis.com/css?family=Ubuntu:400,700);
 
 /**
  * Variables & Mixins
  */
 @family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-@heading-family: "gazebo-bold-font","HelveticaNeue","Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
+@heading-family: Ubuntu, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 @tweetInfoColor: #8899a6;
 @linkColor: #2980b9;
 @activeTabBorderColor: rgba(251, 125, 13, .7); //rgba(255, 0, 0, .7)
@@ -364,12 +364,14 @@ nav{
 
 @media only screen
 and (min-device-width: 320px)
-and (max-device-width: 480px){
-    header{
-        input[type=search]{
-            margin-top: 95px;
-        }
-    }
+and (max-device-width: 480px),
+(min-width: 320px)
+and (max-width: 767px){
+    // header{
+    //     input[type=search]{
+    //         margin-top: 95px;
+    //     }
+    // }
 
     section{
         .empty{
