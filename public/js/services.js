@@ -4,20 +4,20 @@
 App.factory('Socket', function($rootScope){
     'use strict';
 
-    var socket = null;
+    var _socket = null;
 
     return {
         emit: function(channels){
-            socket.emit('addChanel', {channels: channels});
+            _socket.emit('addChanel', {channels: channels});
         },
 
         connect: function(){
-            socket = io.connect('/');
+            _socket = io.connect('/');
             this.listen();
         },
 
         listen: function(){
-            socket
+            _socket
             .on('connect', function(){
                 $rootScope.$broadcast('socket.connected', {
                     socketId: this.getId()
@@ -36,7 +36,7 @@ App.factory('Socket', function($rootScope){
         },
 
         getId: function(){
-            return socket.socket.sessionid;
+            return _socket.socket.sessionid;
         }
     };
 });
@@ -176,14 +176,14 @@ App.factory('Tweet', function(Storage){
 App.factory('StreamStatus', function(){
     'use strict';
 
-    var tmp = {};
+    var _tmp = {};
     return {
         set: function(key, value){
-            tmp[key] = value;
+            _tmp[key] = value;
         },
 
         get: function(key){
-            return tmp[key];
+            return _tmp[key];
         }
     };
 });
@@ -194,9 +194,9 @@ App.factory('StreamStatus', function(){
 App.factory('Storage', function($rootScope, localStorageService){
     'use strict';
 
-    var storageKey = null;
-    var response = {};
-    var responseTypes = {
+    var _storageKey = null;
+    var _response = {};
+    var _responseTypes = {
         success: {
             message: 'Added to "Favorites".',
             bootstrapClass: 'success',
@@ -240,26 +240,43 @@ App.factory('Storage', function($rootScope, localStorageService){
         }
     };
 
+    var _storedIndexes = [];
+    var _storeIndex = function(value){
+        _storedIndexes.push(value);
+    };
+    var _removeIndex = function(value){
+        var i = _storedIndexes.indexOf(value);
+        if(i > -1){
+            _storedIndexes.splice(i, 1);
+        }
+    };
+    var _removeAllIndexes = function(){
+        _storedIndexes = [];
+    };
+
+    var _getData = function(){
+        return localStorageService.get(_storageKey);
+    };
+    var _setData = function(value){
+        return localStorageService.set(_storageKey, value);
+    };
+
     return {
         isSupported: function(){
             return localStorageService.isSupported;
         },
 
-        set: function(value){
-            return localStorageService.set(storageKey, value);
-        },
-
-        get: function(){
-            return localStorageService.get(storageKey);
+        isStored: function(tweetId){
+            return _storedIndexes.indexOf(tweetId) !== -1;
         },
 
         remove: function(tweetId){
             var tweets;
             var restTweets = [];
             try{
-                tweets = this.get();
+                tweets = _getData();
                 if(!tweets || tweets === 'null'){
-                    response = responseTypes.deleteError;
+                    _response = _responseTypes.deleteError;
                 }
                 else{
                     delete tweets[tweetId];
@@ -268,12 +285,13 @@ App.factory('Storage', function($rootScope, localStorageService){
                         this.push(value);
                     }, restTweets);
 
-                    this.set(tweets);
-                    response = responseTypes.deleteSuccess;
+                    _setData(tweets);
+                    _removeIndex(tweetId);
+                    _response = _responseTypes.deleteSuccess;
                 }
             }
             catch(e){
-                response = responseTypes.deleteError;
+                _response = _responseTypes.deleteError;
             }
 
             $rootScope.$broadcast('favorites.removed', {
@@ -283,11 +301,12 @@ App.factory('Storage', function($rootScope, localStorageService){
 
         removeAll: function(){
             try{
-                localStorageService.remove(storageKey);
-                response = responseTypes.deleteAllSuccess;
+                localStorageService.remove(_storageKey);
+                _removeAllIndexes();
+                _response = _responseTypes.deleteAllSuccess;
             }
             catch(e){
-                response = responseTypes.deleteAllError;
+                _response = _responseTypes.deleteAllError;
             }
 
             $rootScope.$broadcast('favorites.removedAll', {
@@ -298,22 +317,24 @@ App.factory('Storage', function($rootScope, localStorageService){
         addToFavorites: function(key, tweet){
             var value;
             try{
-                storageKey = key;
-                value = this.get(key);
+                _storageKey = key;
+                value = _getData();
                 if(!value || value === 'null'){
                     value = {};
                 }
 
                 value[tweet.idStr] = tweet;
-                this.set(value);
-                response = responseTypes.success;
+                _setData(value);
+                _storeIndex(tweet.idStr);
+
+                _response = _responseTypes.success;
             }
             catch(e){
                 if(e.name === 'QUOTA_EXCEEDED_ERR' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED'){
-                    response = responseTypes.notEnoughSpace;
+                    _response = _responseTypes.notEnoughSpace;
                 }
                 else{
-                    response = responseTypes.error;
+                    _response = _responseTypes.error;
                 }
             }
 
@@ -324,7 +345,7 @@ App.factory('Storage', function($rootScope, localStorageService){
 
         getFromFavorites: function(){
             var _return = [];
-            var data = this.get();
+            var data = _getData();
 
             if(data){
                 angular.forEach(data, function(value, key){
@@ -335,7 +356,7 @@ App.factory('Storage', function($rootScope, localStorageService){
         },
 
         getResponse: function(){
-            return response;
+            return _response;
         }
     };
 });

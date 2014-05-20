@@ -32,7 +32,7 @@
                                     <a ng-href="http://twitter.com/{{tweet.user.screenName}}/status/{{tweet.idStr}}" target="_blank">{{tweet.created}}</a>
                                     via <span ng-bind-html="tweet.source"></span>
                                 </small>
-                                <span ng-init="inFavorites=false" ng-click="addToFavorites(tweet, inFavorites); inFavorites=true" class="glyphicon favorite-ico" ng-class="(inFavorites) ? 'glyphicon-star' : 'glyphicon-star-empty'"></span>
+                                <span ng-init="tweetAdded = isFavorited(tweet.idStr)" ng-click="!tweetAdded && addToFavorites(tweet); tweetAdded=true" class="glyphicon favorite-ico" ng-class="(tweetAdded) ? 'glyphicon-star' : 'glyphicon-star-empty'"></span>
                                 <div class="tweet-text" ng-bind-html="tweet.entities"></div>
                             </div>
                         </div>

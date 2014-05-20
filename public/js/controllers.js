@@ -51,10 +51,14 @@ App
                 $scope.showHint = !$scope.showHint;
             };
 
-            $scope.addToFavorites = function(tweet, added){
-                if(!added){
-                    Storage.addToFavorites($scope.socketId, tweet);
-                }
+            $scope.addToFavorites = function(tweet){
+                tweet.addedTimestamp = Date.now();
+                Storage.addToFavorites($scope.socketId, tweet);
+            };
+
+            $scope.isFavorited = function(tweetId){
+                var added = Storage.isStored(tweetId);
+                return added;
             };
 
             if(typeof $scope.$$listeners['favorites.added'] == 'undefined'){
@@ -120,9 +124,9 @@ App
                 $scope.favoritesList = (angular.equals([], storageData)) ? false: storageData;
             };
 
-            $scope.removeFromFavorites = function(index, tweetId){
-                $scope.tweetIndex = index;
-                Storage.remove(tweetId);
+            $scope.removeFromFavorites = function(tweet){
+                $scope.tweetIndex = $scope.favoritesList.indexOf(tweet);
+                Storage.remove(tweet.idStr);
             };
 
             $scope.removeAllFromFavorites = function(){
