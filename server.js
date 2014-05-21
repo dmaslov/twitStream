@@ -48,6 +48,9 @@ function StreamControl(socket, streamOptions){
         }.bind(this));
         this.getFromPool();
 
+        (this.stream).on('error', function (error) {
+          console.log(error);
+        });
     };
 
     this.getFromPool = function(){
