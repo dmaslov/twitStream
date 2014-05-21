@@ -82,11 +82,8 @@ function StreamControl(socket, streamOptions){
 }
 
 io.sockets.on('connection', function (socket) {
-    var streamOptions = {
-        track: ['#Apple']
-    };
-    var stream = new StreamControl(socket, streamOptions);
-    stream.start();
+    var stream = new StreamControl(socket, {track: []});
+    //stream.start();
 
     socket.on('disconnect', function(){
 
