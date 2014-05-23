@@ -2,23 +2,27 @@ var express = require('express'),
     path = require('path'),
     app = express(),
     server = require('http').createServer(app),
-    io = require('socket.io').listen(server, {log: true});
+    io = require('socket.io').listen(server, {log: true}),
+    cacheControl = {};
 
-app.configure(function(){
-    app.set('port', process.env.PORT || 8080);
-    app.set('views', path.join(__dirname, 'views'));
-    app.set('partial', path.join(__dirname, 'views', 'partial'));
-    app.use(express.favicon());
-    app.use(express.logger('dev'));
-    app.use(express.bodyParser());
-    app.use(express.methodOverride());
-    app.use(express.compress());
-    app.use(express.static(path.join(__dirname, 'public')));
-});
+app.set('port', process.env.PORT || 8080);
+app.set('views', path.join(__dirname, 'views'));
+app.set('partial', path.join(__dirname, 'views', 'partial'));
+app.use(express.favicon());
+app.use(express.logger('dev'));
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(express.compress());
 
-app.configure('development', function(){
+app.configure('production', function(){
+    cacheControl = {maxAge: 86400000};
+})
+.configure('development', function(){
     app.use(express.errorHandler());
 });
+
+app.use(express.static(path.join(__dirname, 'public'), cacheControl));
+
 
 app.get('/', function(req, res){
     res.sendfile('index.html', {root: app.get('views')});
