@@ -7,8 +7,12 @@ App.factory('Socket', function($rootScope){
     var _socket = null;
 
     return {
-        emit: function(channels){
-            _socket.emit('addChanel', {channels: channels});
+        emit: function(name, data){
+            var emitData = {};
+            if(typeof data !== 'undefined'){
+                emitData = {params: data};
+            }
+            _socket.emit(name, emitData);
         },
 
         connect: function(){
@@ -29,10 +33,17 @@ App.factory('Socket', function($rootScope){
 
             })
             .on('news', function(data){
-                $rootScope.$broadcast('socket.updates', {
-                    data: data
-                });
-            }.bind(this));
+                $rootScope.$broadcast('socket.updates', {data: data});
+            }.bind(this))
+            .on('twitter.connected', function(){
+                $rootScope.$broadcast('twitter.connected');
+
+            })
+            .on('twitter.reconnecting', function(data){
+                var waitSec = data / 1000;
+                $rootScope.$broadcast('twitter.reconnecting', {waitSec: waitSec});
+
+            });
         },
 
         getId: function(){

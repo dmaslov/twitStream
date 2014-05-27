@@ -48,14 +48,28 @@ function StreamControl(socket, streamOptions){
     this.start = function(){
 
         this.stream = this.streamer.stream('statuses/filter', this.streamOptions);
-        (this.stream).on('tweet', function (tweet) {
-          (this.pool).push(tweet);
-        }.bind(this));
-        this.getFromPool();
 
-        (this.stream).on('error', function (error) {
-          console.log(error);
+        (this.stream)
+        .on('tweet', function (tweet) {
+            (this.pool).push(tweet);
+
+        }.bind(this))
+        .on('connect', function () {
+
+        })
+        .on('connected', function () {
+            (this.socket).emit('twitter.connected', {});
+
+        }.bind(this))
+        .on('reconnect', function (req, res, connectInterval) {
+            (this.socket).emit('twitter.reconnecting', connectInterval);
+
+        }.bind(this))
+        .on('error', function (error) {
+            console.log(error);
         });
+
+        this.getFromPool();
     };
 
     this.getFromPool = function(){
@@ -93,11 +107,17 @@ io.sockets.on('connection', function (socket) {
     var stream = new StreamControl(socket, {track: []});
     //stream.start();
 
-    socket.on('disconnect', function(){
+    socket
+    .on('disconnect', function(){
 
-    }).on('addChanel', function(data){
-        stream.addChannel(data.channels);
+    })
+    .on('addChanel', function(data){
+        stream.addChannel(data.params);
         stream.restart();
+    })
+    .on('error', function(error){
+        console.log(error);
+        console.log(error.stack);
     });
 });
 
