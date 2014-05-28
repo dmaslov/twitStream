@@ -40,6 +40,7 @@ function StreamControl(socket, streamOptions){
 
     this.stream = null;
     this.interval = null;
+    this.timeout = null;
     this.pool = [];
     this.socket = socket;
     this.streamer = new Twit(twitConfig);
@@ -70,6 +71,10 @@ function StreamControl(socket, streamOptions){
         });
 
         this.getFromPool();
+
+        if(this.timeout !== null){
+            clearTimeout(this.timeout);
+        }
     };
 
     this.getFromPool = function(){
@@ -82,16 +87,21 @@ function StreamControl(socket, streamOptions){
     };
 
     this.stop = function(){
-        if(this.stream){
+        if(this.stream !== null){
             (this.stream).stop();
+            this.stream = null;
             this.pool = [];
-            clearInterval(this.interval);
+            if(this.interval !== null){
+                clearInterval(this.interval);
+            }
         }
     };
 
     this.restart = function(){
         this.stop();
-        this.start();
+        this.timeout = setTimeout(function(){
+            this.start();
+        }.bind(this), 3000);
     };
 
     this.addChannel = function(channels){
@@ -104,8 +114,7 @@ function StreamControl(socket, streamOptions){
 }
 
 io.sockets.on('connection', function (socket) {
-    var stream = new StreamControl(socket, {track: []});
-    //stream.start();
+    var stream = new StreamControl(socket, {track: ['Apple']});
 
     socket
     .on('disconnect', function(){
