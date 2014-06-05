@@ -142,7 +142,7 @@ App
             }
 
             if(typeof $scope.$$listeners['twitter.connected'] == 'undefined'){
-                // Need this becouse Twitter has exceeded connection limit for user
+                // Need this because Twitter has exceeded connection limit for user
                 // Hide Alert message
                 $scope.$on('twitter.connected', function(){
                     $scope.stopAlert();
@@ -150,8 +150,8 @@ App
             }
 
             if(typeof $scope.$$listeners['twitter.reconnecting'] == 'undefined'){
-                // Need this becouse Twitter has exceeded connection limit for user
-                // Show Alert message for responsed interval
+                // Need this because Twitter has exceeded connection limit for user
+                // Show Alert message for responded interval
                 $scope.$on('twitter.reconnecting', function(event, response){
                     $scope.startAlert(response.waitSec);
                 });

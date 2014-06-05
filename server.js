@@ -41,6 +41,7 @@ function StreamControl(socket, streamOptions){
     this.stream = null;
     this.interval = null;
     this.timeout = null;
+    this.started = false;
     this.pool = [];
     this.socket = socket;
     this.streamer = new Twit(twitConfig);
@@ -99,9 +100,17 @@ function StreamControl(socket, streamOptions){
 
     this.restart = function(){
         this.stop();
+        var interval = 0;
+        if(this.started){
+            interval = 60000;
+            (this.socket).emit('twitter.reconnecting', interval);
+        }
+
         this.timeout = setTimeout(function(){
             this.start();
-        }.bind(this), 3000);
+        }.bind(this), interval);
+
+        this.started = true;
     };
 
     this.addChannel = function(channels){
