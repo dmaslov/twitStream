@@ -2,22 +2,27 @@ var express = require('express'),
     path = require('path'),
     app = express(),
     server = require('http').createServer(app),
-    io = require('socket.io').listen(server, {log: true});
+    io = require('socket.io').listen(server, {log: true}),
+    cacheControl = {};
 
-app.configure(function(){
-    app.set('port', process.env.PORT || 8080);
-    app.set('views', path.join(__dirname, 'views'));
-    app.set('partial', path.join(__dirname, 'views', 'partial'));
-    app.use(express.favicon());
-    app.use(express.logger('dev'));
-    app.use(express.bodyParser());
-    app.use(express.methodOverride());
-    app.use(express.static(path.join(__dirname, 'public')));
-});
+app.set('port', process.env.PORT || 8080);
+app.set('views', path.join(__dirname, 'views'));
+app.set('partial', path.join(__dirname, 'views', 'partial'));
+app.use(express.favicon());
+app.use(express.logger('dev'));
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(express.compress());
 
-app.configure('development', function(){
+app.configure('production', function(){
+    cacheControl = {maxAge: 86400000};
+})
+.configure('development', function(){
     app.use(express.errorHandler());
 });
+
+app.use(express.static(path.join(__dirname, 'public'), cacheControl));
+
 
 app.get('/', function(req, res){
     res.sendfile('index.html', {root: app.get('views')});
@@ -35,6 +40,8 @@ function StreamControl(socket, streamOptions){
 
     this.stream = null;
     this.interval = null;
+    this.timeout = null;
+    this.started = false;
     this.pool = [];
     this.socket = socket;
     this.streamer = new Twit(twitConfig);
@@ -43,11 +50,32 @@ function StreamControl(socket, streamOptions){
     this.start = function(){
 
         this.stream = this.streamer.stream('statuses/filter', this.streamOptions);
-        (this.stream).on('tweet', function (tweet) {
-          (this.pool).push(tweet);
-        }.bind(this));
+
+        (this.stream)
+        .on('tweet', function (tweet) {
+            (this.pool).push(tweet);
+
+        }.bind(this))
+        .on('connect', function () {
+
+        })
+        .on('connected', function () {
+            (this.socket).emit('twitter.connected', {});
+
+        }.bind(this))
+        .on('reconnect', function (req, res, connectInterval) {
+            (this.socket).emit('twitter.reconnecting', connectInterval);
+
+        }.bind(this))
+        .on('error', function (error) {
+            console.log(error);
+        });
+
         this.getFromPool();
 
+        if(this.timeout !== null){
+            clearTimeout(this.timeout);
+        }
     };
 
     this.getFromPool = function(){
@@ -60,16 +88,29 @@ function StreamControl(socket, streamOptions){
     };
 
     this.stop = function(){
-        if(this.stream){
+        if(this.stream !== null){
             (this.stream).stop();
+            this.stream = null;
             this.pool = [];
-            clearInterval(this.interval);
+            if(this.interval !== null){
+                clearInterval(this.interval);
+            }
         }
     };
 
     this.restart = function(){
         this.stop();
-        this.start();
+        var interval = 0;
+        if(this.started){
+            interval = 60000;
+            (this.socket).emit('twitter.reconnecting', interval);
+        }
+
+        this.timeout = setTimeout(function(){
+            this.start();
+        }.bind(this), interval);
+
+        this.started = true;
     };
 
     this.addChannel = function(channels){
@@ -82,17 +123,19 @@ function StreamControl(socket, streamOptions){
 }
 
 io.sockets.on('connection', function (socket) {
-    var streamOptions = {
-        track: ['#Apple']
-    };
-    var stream = new StreamControl(socket, streamOptions);
-    stream.start();
+    var stream = new StreamControl(socket, {track: ['Apple']});
 
-    socket.on('disconnect', function(){
+    socket
+    .on('disconnect', function(){
 
-    }).on('addChanel', function(data){
-        stream.addChannel(data.channels);
+    })
+    .on('addChanel', function(data){
+        stream.addChannel(data.params);
         stream.restart();
+    })
+    .on('error', function(error){
+        console.log(error);
+        console.log(error.stack);
     });
 });
 
