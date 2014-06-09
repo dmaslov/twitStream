@@ -55,7 +55,7 @@ App.factory('Socket', function($rootScope){
 /*
 * Tweet factory. Parses a single tweet data.
 */
-App.factory('Tweet', function(Storage){
+App.factory('Tweet', function(){
     'use strict';
 
     return {
