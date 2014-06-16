@@ -127,7 +127,7 @@ io.sockets.on('connection', function (socket) {
 
     socket
     .on('disconnect', function(){
-
+        stream.stop();
     })
     .on('addChanel', function(data){
         stream.addChannel(data.params);
