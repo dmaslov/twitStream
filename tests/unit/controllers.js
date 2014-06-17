@@ -5,29 +5,38 @@ describe('Controllers Tests:', function(){
         var $scope,
             StreamController,
             StreamStatus,
+            Socket,
+            Storage,
             $controller,
             $rootScope,
             $timeout,
             timerCallback;
 
-        beforeEach(module('twitStream'));
+        beforeEach(function(){
+            module('twitStream');
+            module('twitStreamMock'); //dirty trick
 
-        beforeEach(inject(function($injector){
-            $rootScope = $injector.get('$rootScope');
-            $scope = $rootScope.$new();
-            $timeout = $injector.get('$timeout');
-            StreamStatus = $injector.get('StreamStatus');
-            $controller = $injector.get('$controller');
-            StreamController = $controller('StreamController', {'$scope': $scope, 'StreamStatus': StreamStatus});
+            inject(function($injector){
+                $rootScope = $injector.get('$rootScope');
+                $scope = $rootScope.$new();
+                $timeout = $injector.get('$timeout');
+                StreamStatus = $injector.get('StreamStatus');
+                Socket = $injector.get('Socket');
+                Storage = $injector.get('Storage');
+                $controller = $injector.get('$controller');
+                StreamController = $controller('StreamController', {'$scope': $scope});
 
-            timerCallback = jasmine.createSpy("timerCallback");
-            jasmine.clock().install();
-        }));
+                timerCallback = jasmine.createSpy("timerCallback");
+                jasmine.clock().install();
+            });
+        });
 
         afterEach(function(){
             $scope = null;
             StreamStatus = {};
             StreamController = null;
+            Socket = null;
+            Storage = null;
             $timeout = null;
             jasmine.clock().uninstall();
         });
@@ -183,19 +192,32 @@ describe('Controllers Tests:', function(){
             expect($scope.alert).toEqual({active: false, activeFor: 1});
         });
 
-        it('should search tweeter stream for selected topics', function(){
-            //socket mock needed..
-            // $scope.search();
-            // expect($scope.loading).toBe(false);
+        it('should not connect to socket if track keywords are missing', function(){
+            $scope.search();
+            expect($scope.loading).toBe(false);
+            expect($scope.channels).toBeUndefined();
+            expect(StreamStatus.get('channels')).toBeUndefined();
+            expect(Socket.getId()).toEqual(''); // shouldn't call Socket.connect(), should return empty string in this case
+        });
 
-            // $scope.channels = ['Hello', 'World'];
-            // $scope.search();
-            // expect($scope.loading).toBe(true);
-            // expect(StreamStatus.get('channels')).toEqual($scope.channels);
-            // expect(StreamStatus.get('showHint')).toBe(false);
-            // expect(StreamStatus.get('hasResults')).toBe(true);
-            // expect(StreamStatus.get('connected')).toBe(true);
-            // expect(StreamStatus.get('results')).toEqual($scope.results);
+        it('should connect to socket if track keywords present', function(){
+            var responseChannels = [];
+            //emit action calls in service, check the response here
+            Socket.on('addChanel', function(data){
+                responseChannels = data.params;
+            });
+
+            $scope.channels = 'Hello,World';
+            $scope.search();
+
+            expect(responseChannels).toEqual($scope.channels.split(',')); //string to array conversion
+            expect(Socket.getId().length).toBeGreaterThan(0); // should call Socket.connect(), should return not empty string in this case
+            expect(StreamStatus.get('channels')).toEqual($scope.channels); //saved as string
+            expect($scope.loading).toBe(true);
+            expect(StreamStatus.get('showHint')).toBe(false);
+            expect(StreamStatus.get('hasResults')).toBe(true);
+            expect(StreamStatus.get('connected')).toBe(true);
+            expect(StreamStatus.get('results')).toEqual($scope.results);
         });
 
         it('should toggle search hint', function(){
@@ -205,14 +227,31 @@ describe('Controllers Tests:', function(){
         });
 
         it('should add tweets to Favorites', function(){
-            //tested in services.js
-            //it('should add tweets to Favorites'
-            return true;
+            $scope.channels = 'Hello,World';
+            $scope.search();
+
+            expect(tweetObj.addedTimestamp).toBeUndefined();
+
+            $scope.addToFavorites(tweetObj);
+            var response = Storage.getResponse();
+
+            expect(tweetObj.addedTimestamp).toBeDefined();
+            expect(tweetObj.addedTimestamp).toBeLessThan(Date.now());
+            expect(response).toEqual(responseTypes.success);
         });
 
         it('should check is specific tweet stored', function(){
-            //tested in services.js
-            //it('should check is specific tweet stored'
+            $scope.addToFavorites(tweetObj);
+            var isFavirited = $scope.isFavorited(tweetObj.idStr);
+            expect(isFavirited).toBe(true);
+        });
+
+        it('should stop alerting on $destroy', function(){
+            expect($scope.alert.active).toBe(false);
+            $scope.startAlert(60);
+            expect($scope.alert.active).toBe(true);
+            $scope.$destroy();
+            expect($scope.alert.active).toBe(false);
         });
     });
 
@@ -220,7 +259,9 @@ describe('Controllers Tests:', function(){
     describe('FavoritesController', function(){
         'use strict';
 
-        beforeEach(module('twitStream'));
+        beforeEach(function(){
+            module('twitStream');
+        });
 
         it('should be inited', inject(function($controller, $rootScope){
             var FavoritesController = $controller('FavoritesController', {$scope: $rootScope});

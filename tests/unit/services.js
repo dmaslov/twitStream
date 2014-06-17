@@ -4,11 +4,13 @@ describe('Services Tests:', function(){
 
         var StreamStatus;
 
-        beforeEach(module('twitStream'));
+        beforeEach(function(){
+            module('twitStream');
 
-        beforeEach(inject(function($injector) {
-            StreamStatus = $injector.get('StreamStatus');
-        }));
+            inject(function($injector) {
+                StreamStatus = $injector.get('StreamStatus');
+            });
+        });
 
         it('should be initted', function(){
             expect(StreamStatus).toBeDefined();
@@ -41,12 +43,14 @@ describe('Services Tests:', function(){
         var Storage,
             key;
 
-        beforeEach(module('twitStream'));
+        beforeEach(function(){
+            module('twitStream');
 
-        beforeEach(inject(function($injector) {
-            Storage = $injector.get('Storage');
-            key = Math.random().toString(36).slice(2);
-        }));
+            inject(function($injector) {
+                Storage = $injector.get('Storage');
+                key = Math.random().toString(36).slice(2);
+            });
+        });
 
         afterEach(function(){
             Storage = null;
@@ -67,6 +71,21 @@ describe('Services Tests:', function(){
 
             expect(response).toEqual(responseTypes.success);
         });
+
+        it('should return error message if add tweets to Favorites failed', function(){
+            Storage.addToFavorites();
+
+            var response = Storage.getResponse();
+            expect(response).toEqual(responseTypes.error);
+        });
+
+        // it('should return error message if LocalStorage quota is reached when add tweets to Favorites', function(){
+        //     //throw new Exception('QUOTA_EXCEEDED_ERR');
+        //     Storage.addToFavorites(key, tweetObj);
+
+        //     var response = Storage.getResponse();
+        //     expect(response).toEqual(responseTypes.notEnoughSpace);
+        // });
 
         it('should return tweets from Favorites', function(){
             Storage.addToFavorites(key, tweetObj);
@@ -105,6 +124,12 @@ describe('Services Tests:', function(){
             expect(isStored).toBe(false);
             expect(response).toEqual(responseTypes.deleteSuccess);
         });
+
+        it('should return error message if cannot remove specific tweet', function(){
+            Storage.remove(tweetObj.idStr);
+            var response = Storage.getResponse();
+            expect(response).toEqual(responseTypes.deleteError);
+        });
     });
 
     describe('factory: Tweet', function(){
@@ -112,11 +137,13 @@ describe('Services Tests:', function(){
 
         var Tweet;
 
-        beforeEach(module('twitStream'));
+        beforeEach(function(){
+            module('twitStream');
 
-        beforeEach(inject(function($injector) {
-            Tweet = $injector.get('Tweet');
-        }));
+            inject(function($injector) {
+                Tweet = $injector.get('Tweet');
+            });
+        });
 
         afterEach(inject(function($injector) {
             Tweet = null;
@@ -150,11 +177,14 @@ describe('Services Tests:', function(){
 
         var Socket;
 
-        beforeEach(module('twitStream'));
+        beforeEach(function(){
+            module('twitStream');
+            module('twitStreamMock'); //dirty trick
 
-        beforeEach(inject(function($injector) {
-            Socket = $injector.get('Socket');
-        }));
+            inject(function($injector) {
+                Socket = $injector.get('Socket');
+            });
+        });
 
         it('should be initted', function(){
             expect(Socket).toBeDefined();
@@ -170,12 +200,22 @@ describe('Services Tests:', function(){
 
         it('should have listen method', function(){
             expect(angular.isFunction(Socket.listen)).toBe(true);
+            expect(Socket.listen()).toBe(true);
         });
 
         it('should have getId method', function(){
             expect(angular.isFunction(Socket.getId)).toBe(true);
         });
 
-        // socket mock needed..
+        it('should emits and receives messages', function(){
+            var testReceived = false;
+
+            Socket.on("test", function(data){
+                testReceived = true;
+            });
+
+            Socket.emit("test", { info: "test" });
+            expect(testReceived).toBe(true);
+        });
     });
 });

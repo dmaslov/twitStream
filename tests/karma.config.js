@@ -15,8 +15,13 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-        '../public/js/app.min.js',
+        '../public/components/angular/angular.js',
+        '../public/components/angular-route/angular-route.js',
+        '../public/components/angular-sanitize/angular-sanitize.js',
+        '../public/components/angular-animate/angular-animate.js',
+        '../public/components/angular-local-storage/angular-local-storage.js',
         '../public/components/angular-mocks/angular-mocks.js',
+        '../public/js/**/*.js',
         './helpers.js',
         './unit/**/*.js'
     ],
@@ -24,21 +29,27 @@ module.exports = function(config) {
 
     // list of files to exclude
     exclude: [
-
+        '../public/js/*.min.js'
     ],
 
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+        '../public/js/controllers.js': ['coverage'],
+        '../public/js/services.js': ['coverage'],
+    },
 
+    coverageReporter: {
+        type : 'html',
+        dir : 'coverage/'
     },
 
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress', 'html'],
+    reporters: ['progress', 'html', 'coverage'],
 
 
     // web server port

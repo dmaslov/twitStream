@@ -14,3 +14,5 @@ var App = angular
     })
     .otherwise({redirectTo:'/'});
 });
+
+var AppMock  = angular.module('twitStreamMock', []); //mock for unit tests

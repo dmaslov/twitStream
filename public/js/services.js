@@ -1,18 +1,19 @@
 /*
-* Socket factory. Performs all socket actionsю
+* Socket factory. Performs all socket actions.
 */
+/* istanbul ignore next */
 App.factory('Socket', function($rootScope){
     'use strict';
 
     var _socket = null;
 
     return {
-        emit: function(name, data){
+        emit: function(eventName, data){
             var emitData = {};
             if(typeof data !== 'undefined'){
                 emitData = {params: data};
             }
-            _socket.emit(name, emitData);
+            _socket.emit(eventName, emitData);
         },
 
         connect: function(){
@@ -52,6 +53,48 @@ App.factory('Socket', function($rootScope){
     };
 });
 
+//Socket behavior mock
+AppMock.factory('Socket', function($rootScope){
+    'use strict';
+
+    var _events = {};
+    var _socketId = '';
+
+    return {
+        emit: function(eventName, data){
+            var emitData = {};
+            if(typeof data !== 'undefined'){
+                emitData = {params: data};
+            }
+
+            if(_events[eventName]){
+                angular.forEach(_events[eventName], function(callback){
+                    callback(emitData);
+                });
+            }
+        },
+
+        connect: function(){
+            _socketId = Math.random().toString(36).slice(2);
+        },
+
+        listen: function(){
+            return true;
+        },
+
+        on: function(eventName, callback){
+            if(!_events[eventName]){
+                _events[eventName] = [];
+            }
+            _events[eventName].push(callback);
+        },
+
+        getId: function(){
+            return _socketId;
+        }
+    };
+});
+
 /*
 * Tweet factory. Parses a single tweet data.
 */
@@ -71,6 +114,7 @@ App.factory('Tweet', function(){
                 delta = delta + (relative_to.getTimezoneOffset() * 60);
 
                 var r = '';
+                /* istanbul ignore next */
                 if(delta < 60){
                     r = 'a minute ago';
                 }else if(delta < 120){
@@ -91,6 +135,7 @@ App.factory('Tweet', function(){
             }
 
             /* Returns such formatted (with html tags) entities like hashtags, mentions etc */
+            /* istanbul ignore next */
             function linkifyEntities(tweet){
                 if(!(tweet.entities)){
                     return tweet.text;
@@ -291,7 +336,7 @@ App.factory('Storage', function($rootScope, localStorageService){
                 }
                 else{
                     delete tweets[tweetId];
-
+                    /* istanbul ignore next */
                     angular.forEach(tweets, function(value, key){
                         this.push(value);
                     }, restTweets);
@@ -302,6 +347,7 @@ App.factory('Storage', function($rootScope, localStorageService){
                 }
             }
             catch(e){
+                /* istanbul ignore next */
                 _response = _responseTypes.deleteError;
             }
 
@@ -317,6 +363,7 @@ App.factory('Storage', function($rootScope, localStorageService){
                 _response = _responseTypes.deleteAllSuccess;
             }
             catch(e){
+                /* istanbul ignore next */
                 _response = _responseTypes.deleteAllError;
             }
 
