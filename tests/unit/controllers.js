@@ -9,7 +9,6 @@ describe('Controllers Tests:', function(){
             Storage,
             $controller,
             $rootScope,
-            $timeout,
             timerCallback;
 
         beforeEach(function(){
@@ -19,7 +18,6 @@ describe('Controllers Tests:', function(){
             inject(function($injector){
                 $rootScope = $injector.get('$rootScope');
                 $scope = $rootScope.$new();
-                $timeout = $injector.get('$timeout');
                 StreamStatus = $injector.get('StreamStatus');
                 Socket = $injector.get('Socket');
                 Storage = $injector.get('Storage');
@@ -37,7 +35,7 @@ describe('Controllers Tests:', function(){
             StreamController = null;
             Socket = null;
             Storage = null;
-            $timeout = null;
+            timerCallback = null;
             jasmine.clock().uninstall();
         });
 
@@ -259,13 +257,156 @@ describe('Controllers Tests:', function(){
     describe('FavoritesController', function(){
         'use strict';
 
+        var $scope,
+            $rootScope,
+            Storage,
+            $controller,
+            FavoritesController,
+            key,
+            timerCallback;
+
         beforeEach(function(){
             module('twitStream');
+
+            inject(function($injector){
+                $rootScope = $injector.get('$rootScope');
+                $scope = $rootScope.$new();
+                Storage = $injector.get('Storage');
+                $controller = $injector.get('$controller');
+                FavoritesController = $controller('FavoritesController', {'$scope': $scope});
+                key = Math.random().toString(36).slice(2);
+
+                timerCallback = jasmine.createSpy("timerCallback");
+                jasmine.clock().install();
+            });
         });
 
-        it('should be inited', inject(function($controller, $rootScope){
-            var FavoritesController = $controller('FavoritesController', {$scope: $rootScope});
+        afterEach(function(){
+            $scope = null;
+            FavoritesController = null;
+            Storage = null;
+            key = null;
+            timerCallback = null;
+            jasmine.clock().uninstall();
+        });
+
+        it('should be inited', function(){
             expect(FavoritesController).toBeDefined();
-        }));
+        });
+
+        it('should have getAllFromFavorites method', function(){
+            expect(angular.isFunction($scope.getAllFromFavorites)).toBe(true);
+        });
+
+        it('should have removeFromFavorites method', function(){
+            expect(angular.isFunction($scope.removeFromFavorites)).toBe(true);
+        });
+
+        it('should have removeAllFromFavorites method', function(){
+            expect(angular.isFunction($scope.removeAllFromFavorites)).toBe(true);
+        });
+
+        it('should have tweetIndex variable', function(){
+            expect($scope.tweetIndex).toBe(null);
+        });
+
+        it('should have favoritesList variable', function(){
+            expect($scope.favoritesList).toBe(false);
+        });
+
+        it('should have removedFromFavorites variable', function(){
+            expect($scope.removedFromFavorites).toBe(false);
+        });
+
+        it('should have q variable', function(){
+            expect($scope.q).toEqual('');
+        });
+
+        it('should get all from Favorites', function(){
+            expect($scope.favoritesList).toBe(false);
+
+            Storage.addToFavorites(key, tweetObj); //store data
+            $scope.getAllFromFavorites(); //get all data
+
+            var tweet = $scope.favoritesList[0];
+
+            expect($scope.favoritesList instanceof Array).toBe(true);
+            expect(tweet instanceof Object).toBe(true);
+            expect(typeof tweet.user).not.toBeUndefined();
+            expect(tweet.user).toEqual(tweetObj.user);
+
+        });
+
+        it('should remove all from Favorites', function(){
+            expect($scope.favoritesList).toBe(false);
+
+            Storage.addToFavorites(key, tweetObj); //store data
+            $scope.getAllFromFavorites(); //get all data and fill $scope.favoritesList under the hood
+            expect($scope.favoritesList).not.toBe(false);
+
+            $scope.removeAllFromFavorites(); //remove all data
+            $scope.getAllFromFavorites(); //get all data again and fill $scope.favoritesList under the hood
+            expect($scope.favoritesList).toBe(false);
+        });
+
+        it('should remove specific tweet from Favorites', function(){
+            expect($scope.favoritesList).toBe(false);
+
+            Storage.addToFavorites(key, tweetObj); //store data
+            $scope.getAllFromFavorites(); //get all data and fill $scope.favoritesList under the hood
+            expect($scope.favoritesList).not.toBe(false);
+
+            $scope.removeFromFavorites($scope.favoritesList[0]); //remove specific data
+            expect($scope.tweetIndex).not.toBe(null); //removed from ng-repeat loop
+            var _return = Storage.getFromFavorites();
+            expect(_return).toEqual([]); //return [] if no data
+
+        });
+
+        it('should track `favorites.removed` event and clear $scope.favoritesList variable', function(){
+            Storage.addToFavorites(key, tweetObj); //store data
+            $scope.getAllFromFavorites(); //get all data and fill $scope.favoritesList under the hood
+            $scope.removeFromFavorites($scope.favoritesList[0]); //remove specific data
+
+            expect($scope.favoritesList).toBe(false);
+            expect($scope.removedFromFavorites).toBe(true);
+            expect($scope.favoritesResponse).toEqual(responseTypes.deleteSuccess);
+            expect($scope.removedFromFavorites).toBe(true);
+
+            setTimeout(function(){
+                $scope.removedFromFavorites = false;
+                timerCallback();
+            }, 1500);
+
+            expect(timerCallback).not.toHaveBeenCalled();
+            expect($scope.removedFromFavorites).toBe(true);
+
+            jasmine.clock().tick(1501);
+            expect(timerCallback).toHaveBeenCalled();
+            expect($scope.removedFromFavorites).toBe(false);
+        });
+
+        it('should track `favorites.removedAll` event and clear $scope.favoritesList variable', function(){
+            Storage.addToFavorites(key, tweetObj); //store data
+            $scope.getAllFromFavorites(); //get all data and fill $scope.favoritesList under the hood
+            $scope.removeAllFromFavorites($scope.favoritesList[0]); //remove specific data
+
+            expect($scope.favoritesList).toBe(false);
+            expect($scope.removedFromFavorites).toBe(true);
+            expect($scope.favoritesResponse).toEqual(responseTypes.deleteAllSuccess);
+            expect($scope.removedFromFavorites).toBe(true);
+
+            setTimeout(function(){
+                $scope.removedFromFavorites = false;
+                timerCallback();
+            }, 1500);
+
+            expect(timerCallback).not.toHaveBeenCalled();
+            expect($scope.removedFromFavorites).toBe(true);
+
+            jasmine.clock().tick(1501);
+            expect(timerCallback).toHaveBeenCalled();
+            expect($scope.removedFromFavorites).toBe(false);
+        });
     });
 });

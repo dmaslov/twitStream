@@ -63,6 +63,7 @@ AppMock.factory('Socket', function($rootScope){
     return {
         emit: function(eventName, data){
             var emitData = {};
+            /* istanbul ignore else */
             if(typeof data !== 'undefined'){
                 emitData = {params: data};
             }
@@ -83,6 +84,7 @@ AppMock.factory('Socket', function($rootScope){
         },
 
         on: function(eventName, callback){
+            /* istanbul ignore else */
             if(!_events[eventName]){
                 _events[eventName] = [];
             }
@@ -302,6 +304,7 @@ App.factory('Storage', function($rootScope, localStorageService){
     };
     var _removeIndex = function(value){
         var i = _storedIndexes.indexOf(value);
+        /* istanbul ignore else */
         if(i > -1){
             _storedIndexes.splice(i, 1);
         }

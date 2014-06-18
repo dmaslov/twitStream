@@ -33,8 +33,9 @@ App
 
                 if($scope.channels){
                     $scope.loading = true;
-
-                    if(!$scope.socketInited || streamOn){
+                    /* istanbul ignore else */
+                    if(!$scope.socketInited || /* istanbul ignore next */ streamOn){
+                        /* istanbul ignore else */
                         if(!streamOn){
                             /* Connects just once when the app starts. */
                             Socket.connect();
@@ -69,6 +70,7 @@ App
 
             //creates countdown while alert will be shown and fill alert variable
             $scope.startAlert = function(waitSec){
+                /* istanbul ignore if */
                 if(angular.isDefined(stop)){
                     return;
                 }
@@ -76,7 +78,7 @@ App
                     active: true,
                     activeFor: waitSec
                 };
-
+                /* istanbul ignore next */
                 stop = $interval(function(){
                     if(waitSec >= 1){
                         $scope.alert.activeFor = waitSec--;
@@ -99,16 +101,19 @@ App
                 $scope.alert = {active: false};
             };
 
+            /* istanbul ignore else */
             if(typeof $scope.$$listeners['favorites.added'] == 'undefined'){
                 $scope.$on('favorites.added', function(event, response){
                     $scope.addedToFavorites = true;
                     $scope.favoritesResponse = response.status;
+                    /* istanbul ignore next */
                     $timeout(function(){
                         $scope.addedToFavorites = false;
                     }, 1500);
                 });
             }
 
+            /* istanbul ignore else */
             if(typeof $scope.$$listeners['socket.updates'] == 'undefined'){
                 $scope.$on('socket.updates', function(event, response){
                     /* $apply is used because of a non-Angular event. */
@@ -123,6 +128,7 @@ App
                 });
             }
 
+            /* istanbul ignore else */
             if(typeof $scope.$$listeners['socket.connected'] == 'undefined'){
                 $scope.$on('socket.connected', function(event, response){
                     $scope.socketInited = true;
@@ -133,6 +139,7 @@ App
                 });
             }
 
+            /* istanbul ignore else */
             if(typeof $scope.$$listeners['socket.disconnected'] == 'undefined'){
                 $scope.$on('socket.disconnected', function(){
                     $scope.socketInited = false;
@@ -141,6 +148,7 @@ App
                 });
             }
 
+            /* istanbul ignore else */
             if(typeof $scope.$$listeners['twitter.connected'] == 'undefined'){
                 // Need this because Twitter has exceeded connection limit for user
                 // Hide Alert message
@@ -149,6 +157,7 @@ App
                 });
             }
 
+            /* istanbul ignore else */
             if(typeof $scope.$$listeners['twitter.reconnecting'] == 'undefined'){
                 // Need this because Twitter has exceeded connection limit for user
                 // Show Alert message for responded interval
@@ -189,34 +198,42 @@ App
             };
 
             $scope.removeAllFromFavorites = function(){
+                /* istanbul ignore else */
                 if(!angular.equals([], $scope.favoritesList) && $scope.favoritesList){
                     Storage.removeAll();
                 }
             };
 
+            /* istanbul ignore else */
             if(typeof $scope.$$listeners['favorites.removed'] == 'undefined'){
                 $scope.$on('favorites.removed', function(event, response){
+                    /* istanbul ignore else */
                     if(response.status.type === 'ok'){
                         $scope.favoritesList.splice($scope.tweetIndex, 1);
                     }
+                    /* istanbul ignore else */
                     if(angular.equals([], $scope.favoritesList)){
                         $scope.favoritesList = false;
                     }
                     $scope.removedFromFavorites = true;
                     $scope.favoritesResponse = response.status;
+                    /* istanbul ignore next */
                     $timeout(function(){
                         $scope.removedFromFavorites = false;
                     }, 1500);
                 });
             }
 
+            /* istanbul ignore else */
             if(typeof $scope.$$listeners['favorites.removedAll'] == 'undefined'){
                 $scope.$on('favorites.removedAll', function(event, response){
+                    /* istanbul ignore else */
                     if(response.status.type === 'ok'){
                         $scope.favoritesList = false;
                     }
                     $scope.removedFromFavorites = true;
                     $scope.favoritesResponse = response.status;
+                    /* istanbul ignore next */
                     $timeout(function(){
                         $scope.removedFromFavorites = false;
                     }, 1500);
