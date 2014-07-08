@@ -2,17 +2,16 @@ App
 .controller('StreamController',
     [
         '$scope',
-        '$location',
         '$timeout',
         '$interval',
         'Socket',
         'Tweet',
         'StreamStatus',
         'Storage',
-        function($scope, $location, $timeout, $interval, Socket, Tweet, StreamStatus, Storage){
+        function($scope, $timeout, $interval, Socket, Tweet, StreamStatus, Storage){
             'use strict';
 
-            $scope.$location = $location;
+            $scope.controller = 'StreamController';
             $scope.socketInited = StreamStatus.get('socketInited') || false; // Prevents from reconnection for every submit action.
             $scope.loading = StreamStatus.get('loading') || false;      // Shows/hides loader.
             $scope.showHint = StreamStatus.get('showHint') || false;     // Shows/hides hint
@@ -175,13 +174,12 @@ App
 .controller('FavoritesController',
     [
         '$scope',
-        '$location',
         '$timeout',
         'Storage',
-        function($scope, $location, $timeout, Storage){
+        function($scope, $timeout, Storage){
             'use strict';
 
-            $scope.$location = $location;
+            $scope.controller = 'FavoritesController';
             $scope.tweetIndex = null; //A clicked tweet index.
             $scope.favoritesList = false;
             $scope.removedFromFavorites = false; //Shows/hides alerts
