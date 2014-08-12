@@ -3,14 +3,16 @@ App
     [
         '$scope',
         '$timeout',
+        '$location',
         '$interval',
         'Socket',
         'Tweet',
         'StreamStatus',
         'Storage',
-        function($scope, $timeout, $interval, Socket, Tweet, StreamStatus, Storage){
+        function($scope, $timeout, $location, $interval, Socket, Tweet, StreamStatus, Storage){
             'use strict';
 
+            $scope.$location = $location; //To know which tab is active
             $scope.controller = 'StreamController';
             $scope.socketInited = StreamStatus.get('socketInited') || false; // Prevents from reconnection for every submit action.
             $scope.loading = StreamStatus.get('loading') || false;      // Shows/hides loader.
@@ -175,10 +177,12 @@ App
     [
         '$scope',
         '$timeout',
+        '$location',
         'Storage',
-        function($scope, $timeout, Storage){
+        function($scope, $timeout, $location, Storage){
             'use strict';
 
+            $scope.$location = $location; //To know which tab is active
             $scope.controller = 'FavoritesController';
             $scope.tweetIndex = null; //A clicked tweet index.
             $scope.favoritesList = false;

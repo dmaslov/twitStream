@@ -67,6 +67,10 @@ describe('Controllers Tests:', function(){
             expect(angular.isFunction($scope.stopAlert)).toBe(true);
         });
 
+        it('should have $location variable', function(){
+            expect($scope.$location).not.toBe(undefined);
+        });
+
         it('should have socketInited variable', function(){
             expect($scope.socketInited).toBe(false);
         });
@@ -304,6 +308,10 @@ describe('Controllers Tests:', function(){
 
         it('should have removeAllFromFavorites method', function(){
             expect(angular.isFunction($scope.removeAllFromFavorites)).toBe(true);
+        });
+
+        it('should have $location variable', function(){
+            expect($scope.$location).not.toBe(undefined);
         });
 
         it('should have tweetIndex variable', function(){

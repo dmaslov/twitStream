@@ -23,7 +23,8 @@ module.exports = function(config) {
         '../public/components/angular-mocks/angular-mocks.js',
         '../public/js/**/*.js',
         './helpers.js',
-        './unit/**/*.js'
+        './unit/**/*.js',
+        '../views/partial/tweet_template.html'
     ],
 
 
@@ -38,6 +39,19 @@ module.exports = function(config) {
     preprocessors: {
         '../public/js/controllers.js': ['coverage'],
         '../public/js/services.js': ['coverage'],
+        '../views/partial/tweet_template.html': ['ng-html2js']
+    },
+
+    ngHtml2JsPreprocessor: {
+      'moduleName': 'Templates',
+
+      // Function that transforms the path to look exactly like
+      // you have it in templateUrl in your Angular code
+      //
+      // Mine looks like this
+      cacheIdFromPath: function(filepath) {
+        return filepath.match(/\/partial\/.*/)[0];
+      }
     },
 
     coverageReporter: {

@@ -14,9 +14,7 @@
         <div ng-include src="'/partial/_navigation.html'"></div>
         <div ng-show="loading" class="loader"></div>
         <div ng-show="hasResults">
-            <div class="result" ng-repeat="tweet in results">
-                <tweet></tweet>
-            </div>
+           <tweet class="result" ng-repeat="tweet in results"></tweet>
         </div>
     </section>
     <div ng-cloak ng-show="addedToFavorites" class="_alerts" ng-include src="'/partial/_favoritesAlert.html'"></div>

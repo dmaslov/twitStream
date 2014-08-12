@@ -10,9 +10,7 @@
     <section ng-cloak class="col-xs-12">
         <div ng-include src="'/partial/_navigation.html'"></div>
         <div ng-show="favoritesList">
-            <div class="result" ng-repeat="tweet in favoritesList | filter:q | orderBy:'-addedTimestamp'">
-                <tweet></tweet>
-            </div>
+           <tweet class="result" ng-repeat="tweet in favoritesList | filter:q | orderBy:'-addedTimestamp'"></tweet>
         </div>
         <div ng-show="!favoritesList">
             <div class="empty col-xs-12 col-sm-6">
