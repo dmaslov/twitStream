@@ -1,20 +1,20 @@
-<div ng-init="search()">
+<div ng-init="Stream.search()">
     <header class="col-xs-12">
         <div class="container">
             <div class="row">
                 <h1>TwitStream</h1>
-                <form ng-submit="search()">
-                    <div ng-cloak ng-show="showHint" class="popover-wrapper" ng-include src="'/partial/_popover.html'"></div>
-                    <input ng-model="channels" ng-click="toggleHint()" type="search" results="5" class="form-control" placeholder="e.g #Apple">
+                <form ng-submit="Stream.search()">
+                    <div ng-cloak ng-show="Stream.showHint" class="popover-wrapper" ng-include src="'/partial/_popover.html'"></div>
+                    <input ng-model="Stream.channels" ng-click="Stream.toggleHint()" type="search" results="5" class="form-control" placeholder="e.g #Apple">
                 </form>
             </div>
         </div>
     </header>
     <section ng-cloak class="col-xs-12">
         <div ng-include src="'/partial/_navigation.html'"></div>
-        <div ng-show="loading" class="loader"></div>
-        <div ng-show="hasResults">
-           <tweet class="result" ng-repeat="tweet in results"></tweet>
+        <div ng-show="Stream.loading" class="loader"></div>
+        <div ng-show="Stream.hasResults">
+           <tweet class="result" ng-repeat="tweet in Stream.results"></tweet>
         </div>
     </section>
     <div ng-cloak ng-show="addedToFavorites" class="_alerts" ng-include src="'/partial/_favoritesAlert.html'"></div>

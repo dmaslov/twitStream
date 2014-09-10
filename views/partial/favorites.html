@@ -1,18 +1,18 @@
-<div ng-init="getAllFromFavorites()">
+<div ng-init="Fav.getAllFromFavorites()">
     <header class="col-xs-12">
         <div class="container">
             <div class="row">
                 <h1>TwitStream</h1>
-                <input ng-model="q" type="search" results="5" class="form-control">
+                <input ng-model="Fav.q" type="search" results="5" class="form-control">
             </div>
         </div>
     </header>
     <section ng-cloak class="col-xs-12">
         <div ng-include src="'/partial/_navigation.html'"></div>
-        <div ng-show="favoritesList">
-           <tweet class="result" ng-repeat="tweet in favoritesList | filter:q | orderBy:'-addedTimestamp'"></tweet>
+        <div ng-show="Fav.favoritesList">
+           <tweet class="result" ng-repeat="tweet in Fav.favoritesList | filter:Fav.q | orderBy:'-addedTimestamp'"></tweet>
         </div>
-        <div ng-show="!favoritesList">
+        <div ng-show="!Fav.favoritesList">
             <div class="empty col-xs-12 col-sm-6">
                 <div class="alert alert-warning">
                     <p>The favorites is empty..</p>
@@ -20,5 +20,5 @@
             </div>
         </div>
     </section>
-    <div ng-cloak ng-show="removedFromFavorites" class="_alerts" ng-include src="'/partial/_favoritesAlert.html'"></div>
+    <div ng-cloak ng-show="Fav.removedFromFavorites" class="_alerts" ng-include src="'/partial/_favoritesAlert.html'"></div>
 </div>

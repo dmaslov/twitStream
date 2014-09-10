@@ -37,8 +37,12 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-        '../public/js/controllers.js': ['coverage'],
-        '../public/js/services.js': ['coverage'],
+        '../public/js/controllers/favorites.js': ['coverage'],
+        '../public/js/controllers/stream.js': ['coverage'],
+        '../public/js/services/socket.js': ['coverage'],
+        '../public/js/services/storage.js': ['coverage'],
+        '../public/js/services/streamstatus.js': ['coverage'],
+        '../public/js/services/tweet.js': ['coverage'],
         '../views/partial/tweet_template.html': ['ng-html2js']
     },
 

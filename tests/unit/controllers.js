@@ -44,47 +44,51 @@ describe('Controllers Tests:', function(){
         });
 
         it('should have search method', function(){
-            expect(angular.isFunction($scope.search)).toBe(true);
+            expect(angular.isFunction(StreamController.search)).toBe(true);
         });
 
         it('should have toggleHint method', function(){
-            expect(angular.isFunction($scope.toggleHint)).toBe(true);
+            expect(angular.isFunction(StreamController.toggleHint)).toBe(true);
         });
 
         it('should have addToFavorites method', function(){
-            expect(angular.isFunction($scope.addToFavorites)).toBe(true);
+            expect(angular.isFunction(StreamController.addToFavorites)).toBe(true);
         });
 
         it('should have isFavorited method', function(){
-            expect(angular.isFunction($scope.isFavorited)).toBe(true);
+            expect(angular.isFunction(StreamController.isFavorited)).toBe(true);
         });
 
         it('should have startAlert method', function(){
-            expect(angular.isFunction($scope.startAlert)).toBe(true);
+            expect(angular.isFunction(StreamController.startAlert)).toBe(true);
         });
 
         it('should have stopAlert method', function(){
-            expect(angular.isFunction($scope.stopAlert)).toBe(true);
+            expect(angular.isFunction(StreamController.stopAlert)).toBe(true);
         });
 
         it('should have $location variable', function(){
             expect($scope.$location).not.toBe(undefined);
         });
 
+        it('should have controller variable', function(){
+            expect($scope.controller).not.toBe(undefined);
+        });
+
         it('should have socketInited variable', function(){
-            expect($scope.socketInited).toBe(false);
+            expect(StreamController.socketInited).toBe(false);
         });
 
         it('should have loading variable', function(){
-            expect($scope.loading).toBe(false);
+            expect(StreamController.loading).toBe(false);
         });
 
         it('should have showHint variable', function(){
-            expect($scope.showHint).toBe(false);
+            expect(StreamController.showHint).toBe(false);
         });
 
         it('should have hasResults variable', function(){
-            expect($scope.hasResults).toBe(false);
+            expect(StreamController.hasResults).toBe(false);
         });
 
         it('should have addedToFavorites variable', function(){
@@ -92,11 +96,11 @@ describe('Controllers Tests:', function(){
         });
 
         it('should have socketId variable', function(){
-            expect($scope.socketId).toBe(undefined);
+            expect(StreamController.socketId).toBe(undefined);
         });
 
         it('should have results variable', function(){
-            expect($scope.results instanceof Array).toBe(true);
+            expect(StreamController.results instanceof Array).toBe(true);
         });
 
         it('should have alert variable', function(){
@@ -125,10 +129,10 @@ describe('Controllers Tests:', function(){
         it('should track `socket.updates` event', function(){
             $rootScope.$broadcast('socket.updates', {data: tweetObj});
 
-            expect($scope.hasResults).toBe(true);
-            expect($scope.loading).toBe(false);
-            expect($scope.results[0] instanceof Object).toBe(true);
-            expect($scope.results[0].user.name).toEqual(tweetObj.user.name);
+            expect(StreamController.hasResults).toBe(true);
+            expect(StreamController.loading).toBe(false);
+            expect(StreamController.results[0] instanceof Object).toBe(true);
+            expect(StreamController.results[0].user.name).toEqual(tweetObj.user.name);
             expect(StreamStatus.get('loading')).toBe(false);
             expect($scope.alert).toEqual({active: false});
         });
@@ -137,8 +141,8 @@ describe('Controllers Tests:', function(){
             var socketId = 'AOZEVLxiaqWkXsnajCpX';
             $rootScope.$broadcast('socket.connected', {socketId: socketId});
 
-            expect($scope.socketInited).toBe(true);
-            expect($scope.socketId).toEqual(socketId);
+            expect(StreamController.socketInited).toBe(true);
+            expect(StreamController.socketId).toEqual(socketId);
             expect(StreamStatus.get('socketInited')).toBe(true);
             expect(StreamStatus.get('socketId')).toEqual(socketId);
         });
@@ -146,7 +150,7 @@ describe('Controllers Tests:', function(){
         it('should track `socket.disconnected` event', function(){
             $rootScope.$broadcast('socket.disconnected');
 
-            expect($scope.socketInited).toBe(false);
+            expect(StreamController.socketInited).toBe(false);
             expect(StreamStatus.get('socketInited')).toBe(false);
         });
 
@@ -195,9 +199,9 @@ describe('Controllers Tests:', function(){
         });
 
         it('should not connect to socket if track keywords are missing', function(){
-            $scope.search();
-            expect($scope.loading).toBe(false);
-            expect($scope.channels).toBeUndefined();
+            StreamController.search();
+            expect(StreamController.loading).toBe(false);
+            expect(StreamController.channels).toBeUndefined();
             expect(StreamStatus.get('channels')).toBeUndefined();
             expect(Socket.getId()).toEqual(''); // shouldn't call Socket.connect(), should return empty string in this case
         });
@@ -209,32 +213,32 @@ describe('Controllers Tests:', function(){
                 responseChannels = data.params;
             });
 
-            $scope.channels = 'Hello,World';
-            $scope.search();
+            StreamController.channels = 'Hello,World';
+            StreamController.search();
 
-            expect(responseChannels).toEqual($scope.channels.split(',')); //string to array conversion
+            expect(responseChannels).toEqual(StreamController.channels.split(',')); //string to array conversion
             expect(Socket.getId().length).toBeGreaterThan(0); // should call Socket.connect(), should return not empty string in this case
-            expect(StreamStatus.get('channels')).toEqual($scope.channels); //saved as string
-            expect($scope.loading).toBe(true);
+            expect(StreamStatus.get('channels')).toEqual(StreamController.channels); //saved as string
+            expect(StreamController.loading).toBe(true);
             expect(StreamStatus.get('showHint')).toBe(false);
             expect(StreamStatus.get('hasResults')).toBe(true);
             expect(StreamStatus.get('connected')).toBe(true);
-            expect(StreamStatus.get('results')).toEqual($scope.results);
+            expect(StreamStatus.get('results')).toEqual(StreamController.results);
         });
 
         it('should toggle search hint', function(){
-            var showHint = $scope.showHint;
-            $scope.toggleHint();
-            expect($scope.showHint).toBe(!showHint);
+            var showHint = StreamController.showHint;
+            StreamController.toggleHint();
+            expect(StreamController.showHint).toBe(!showHint);
         });
 
         it('should add tweets to Favorites', function(){
-            $scope.channels = 'Hello,World';
-            $scope.search();
+            StreamController.channels = 'Hello,World';
+            StreamController.search();
 
             expect(tweetObj.addedTimestamp).toBeUndefined();
 
-            $scope.addToFavorites(tweetObj);
+            StreamController.addToFavorites(tweetObj);
             var response = Storage.getResponse();
 
             expect(tweetObj.addedTimestamp).toBeDefined();
@@ -243,14 +247,14 @@ describe('Controllers Tests:', function(){
         });
 
         it('should check is specific tweet stored', function(){
-            $scope.addToFavorites(tweetObj);
-            var isFavirited = $scope.isFavorited(tweetObj.idStr);
+            StreamController.addToFavorites(tweetObj);
+            var isFavirited = StreamController.isFavorited(tweetObj.idStr);
             expect(isFavirited).toBe(true);
         });
 
         it('should stop alerting on $destroy', function(){
             expect($scope.alert.active).toBe(false);
-            $scope.startAlert(60);
+            StreamController.startAlert(60);
             expect($scope.alert.active).toBe(true);
             $scope.$destroy();
             expect($scope.alert.active).toBe(false);
@@ -299,46 +303,50 @@ describe('Controllers Tests:', function(){
         });
 
         it('should have getAllFromFavorites method', function(){
-            expect(angular.isFunction($scope.getAllFromFavorites)).toBe(true);
+            expect(angular.isFunction(FavoritesController.getAllFromFavorites)).toBe(true);
         });
 
         it('should have removeFromFavorites method', function(){
-            expect(angular.isFunction($scope.removeFromFavorites)).toBe(true);
+            expect(angular.isFunction(FavoritesController.removeFromFavorites)).toBe(true);
         });
 
         it('should have removeAllFromFavorites method', function(){
-            expect(angular.isFunction($scope.removeAllFromFavorites)).toBe(true);
+            expect(angular.isFunction(FavoritesController.removeAllFromFavorites)).toBe(true);
         });
 
         it('should have $location variable', function(){
             expect($scope.$location).not.toBe(undefined);
         });
 
+        it('should have controller variable', function(){
+            expect($scope.controller).not.toBe(undefined);
+        });
+
         it('should have tweetIndex variable', function(){
-            expect($scope.tweetIndex).toBe(null);
+            expect(FavoritesController.tweetIndex).toBe(null);
         });
 
         it('should have favoritesList variable', function(){
-            expect($scope.favoritesList).toBe(false);
+            expect(FavoritesController.favoritesList).toBe(false);
         });
 
         it('should have removedFromFavorites variable', function(){
-            expect($scope.removedFromFavorites).toBe(false);
+            expect(FavoritesController.removedFromFavorites).toBe(false);
         });
 
         it('should have q variable', function(){
-            expect($scope.q).toEqual('');
+            expect(FavoritesController.q).toEqual('');
         });
 
         it('should get all from Favorites', function(){
-            expect($scope.favoritesList).toBe(false);
+            expect(FavoritesController.favoritesList).toBe(false);
 
             Storage.addToFavorites(key, tweetObj); //store data
-            $scope.getAllFromFavorites(); //get all data
+            FavoritesController.getAllFromFavorites(); //get all data
 
-            var tweet = $scope.favoritesList[0];
+            var tweet = FavoritesController.favoritesList[0];
 
-            expect($scope.favoritesList instanceof Array).toBe(true);
+            expect(FavoritesController.favoritesList instanceof Array).toBe(true);
             expect(tweet instanceof Object).toBe(true);
             expect(typeof tweet.user).not.toBeUndefined();
             expect(tweet.user).toEqual(tweetObj.user);
@@ -346,75 +354,75 @@ describe('Controllers Tests:', function(){
         });
 
         it('should remove all from Favorites', function(){
-            expect($scope.favoritesList).toBe(false);
+            expect(FavoritesController.favoritesList).toBe(false);
 
             Storage.addToFavorites(key, tweetObj); //store data
-            $scope.getAllFromFavorites(); //get all data and fill $scope.favoritesList under the hood
-            expect($scope.favoritesList).not.toBe(false);
+            FavoritesController.getAllFromFavorites(); //get all data and fill FavoritesController.favoritesList under the hood
+            expect(FavoritesController.favoritesList).not.toBe(false);
 
-            $scope.removeAllFromFavorites(); //remove all data
-            $scope.getAllFromFavorites(); //get all data again and fill $scope.favoritesList under the hood
-            expect($scope.favoritesList).toBe(false);
+            FavoritesController.removeAllFromFavorites(); //remove all data
+            FavoritesController.getAllFromFavorites(); //get all data again and fill FavoritesController.favoritesList under the hood
+            expect(FavoritesController.favoritesList).toBe(false);
         });
 
         it('should remove specific tweet from Favorites', function(){
-            expect($scope.favoritesList).toBe(false);
+            expect(FavoritesController.favoritesList).toBe(false);
 
             Storage.addToFavorites(key, tweetObj); //store data
-            $scope.getAllFromFavorites(); //get all data and fill $scope.favoritesList under the hood
-            expect($scope.favoritesList).not.toBe(false);
+            FavoritesController.getAllFromFavorites(); //get all data and fill FavoritesController.favoritesList under the hood
+            expect(FavoritesController.favoritesList).not.toBe(false);
 
-            $scope.removeFromFavorites($scope.favoritesList[0]); //remove specific data
-            expect($scope.tweetIndex).not.toBe(null); //removed from ng-repeat loop
+            FavoritesController.removeFromFavorites(FavoritesController.favoritesList[0]); //remove specific data
+            expect(FavoritesController.tweetIndex).not.toBe(null); //removed from ng-repeat loop
             var _return = Storage.getFromFavorites();
             expect(_return).toEqual([]); //return [] if no data
 
         });
 
-        it('should track `favorites.removed` event and clear $scope.favoritesList variable', function(){
+        it('should track `favorites.removed` event and clear FavoritesController.favoritesList variable', function(){
             Storage.addToFavorites(key, tweetObj); //store data
-            $scope.getAllFromFavorites(); //get all data and fill $scope.favoritesList under the hood
-            $scope.removeFromFavorites($scope.favoritesList[0]); //remove specific data
+            FavoritesController.getAllFromFavorites(); //get all data and fill FavoritesController.favoritesList under the hood
+            FavoritesController.removeFromFavorites(FavoritesController.favoritesList[0]); //remove specific data
 
-            expect($scope.favoritesList).toBe(false);
-            expect($scope.removedFromFavorites).toBe(true);
+            expect(FavoritesController.favoritesList).toBe(false);
+            expect(FavoritesController.removedFromFavorites).toBe(true);
             expect($scope.favoritesResponse).toEqual(responseTypes.deleteSuccess);
-            expect($scope.removedFromFavorites).toBe(true);
+            expect(FavoritesController.removedFromFavorites).toBe(true);
 
             setTimeout(function(){
-                $scope.removedFromFavorites = false;
+                FavoritesController.removedFromFavorites = false;
                 timerCallback();
             }, 1500);
 
             expect(timerCallback).not.toHaveBeenCalled();
-            expect($scope.removedFromFavorites).toBe(true);
+            expect(FavoritesController.removedFromFavorites).toBe(true);
 
             jasmine.clock().tick(1501);
             expect(timerCallback).toHaveBeenCalled();
-            expect($scope.removedFromFavorites).toBe(false);
+            expect(FavoritesController.removedFromFavorites).toBe(false);
         });
 
-        it('should track `favorites.removedAll` event and clear $scope.favoritesList variable', function(){
+        it('should track `favorites.removedAll` event and clear FavoritesController.favoritesList variable', function(){
             Storage.addToFavorites(key, tweetObj); //store data
-            $scope.getAllFromFavorites(); //get all data and fill $scope.favoritesList under the hood
-            $scope.removeAllFromFavorites($scope.favoritesList[0]); //remove specific data
+            FavoritesController.getAllFromFavorites(); //get all data and fill FavoritesController.favoritesList under the hood
+            FavoritesController.removeAllFromFavorites(FavoritesController.favoritesList[0]); //remove specific data
 
-            expect($scope.favoritesList).toBe(false);
-            expect($scope.removedFromFavorites).toBe(true);
+            expect(FavoritesController.favoritesList).toBe(false);
+            expect(FavoritesController.removedFromFavorites).toBe(true);
             expect($scope.favoritesResponse).toEqual(responseTypes.deleteAllSuccess);
-            expect($scope.removedFromFavorites).toBe(true);
+            expect(FavoritesController.removedFromFavorites).toBe(true);
 
             setTimeout(function(){
-                $scope.removedFromFavorites = false;
+                FavoritesController.removedFromFavorites = false;
                 timerCallback();
             }, 1500);
 
             expect(timerCallback).not.toHaveBeenCalled();
-            expect($scope.removedFromFavorites).toBe(true);
+            expect(FavoritesController.removedFromFavorites).toBe(true);
 
             jasmine.clock().tick(1501);
             expect(timerCallback).toHaveBeenCalled();
-            expect($scope.removedFromFavorites).toBe(false);
+            expect(FavoritesController.removedFromFavorites).toBe(false);
         });
     });
 });

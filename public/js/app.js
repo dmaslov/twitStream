@@ -1,18 +1,23 @@
-var App = angular
-.module('twitStream', ['ngRoute', 'ngSanitize', 'ngAnimate', 'LocalStorageModule'])
-.config(function($routeProvider){
-    'use strict';
+(function(angular){
+  'use strict';
 
+  angular
+    .module('twitStream', ['ngRoute', 'ngSanitize', 'ngAnimate', 'LocalStorageModule'])
+    .config(Config);
+
+  function Config($routeProvider){
     $routeProvider
-    .when('/', {
+      .when('/', {
         templateUrl: '/partial/stream.html',
-        controller: 'StreamController'
-    })
-    .when('/storage', {
+        controller: 'StreamController',
+        controllerAs: 'Stream'
+      })
+      .when('/storage', {
         templateUrl: '/partial/favorites.html',
-        controller: 'FavoritesController'
-    })
-    .otherwise({redirectTo:'/'});
-});
+        controller: 'FavoritesController',
+        controllerAs: 'Fav'
+      })
+      .otherwise({redirectTo:'/'});
+  }
 
-var AppMock  = angular.module('twitStreamMock', []); //mock for unit tests
+})(angular);
